@@ -64,8 +64,7 @@ class SysPathOrderTest(unittest.TestCase):
                     first_user = i
 
         sys_path_str = "\n".join(
-            f"{i}: ({category}) {value}"
-            for i, (category, value) in enumerate(categorized_paths)
+            f"{i}: ({category}) {value}" for i, (category, value) in enumerate(categorized_paths)
         )
         if None in (last_stdlib, first_user, first_runtime_site):
             self.fail(

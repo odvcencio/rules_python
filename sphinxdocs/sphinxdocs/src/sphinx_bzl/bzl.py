@@ -24,14 +24,12 @@ from typing import Callable, Iterable, TypeVar
 from docutils import nodes as docutils_nodes
 from docutils.parsers.rst import directives as docutils_directives
 from docutils.parsers.rst import states
-from sphinx import addnodes, builders
+from sphinx import addnodes, builders, domains, environment, roles
 from sphinx import directives as sphinx_directives
-from sphinx import domains, environment, roles
 from sphinx.highlighting import lexer_classes
 from sphinx.locale import _
-from sphinx.util import docfields
+from sphinx.util import docfields, inspect, logging
 from sphinx.util import docutils as sphinx_docutils
-from sphinx.util import inspect, logging
 from sphinx.util import nodes as sphinx_nodes
 from sphinx.util import typing as sphinx_typing
 from typing_extensions import TypeAlias, override
@@ -49,9 +47,7 @@ _T = TypeVar("_T")
 _GetObjectsTuple: TypeAlias = tuple[str, str, str, str, str, int]
 
 # See SphinxRole.run definition; the docs for role classes are pretty sparse.
-_RoleRunResult: TypeAlias = tuple[
-    list[docutils_nodes.Node], list[docutils_nodes.system_message]
-]
+_RoleRunResult: TypeAlias = tuple[list[docutils_nodes.Node], list[docutils_nodes.system_message]]
 
 
 def _log_debug(message, *args):
@@ -118,7 +114,7 @@ class _ObjectEntry:
         )
 
     def __repr__(self):
-        return f"ObjectEntry({self.full_id=}, {self.object_type=}, {self.display_name=}, {self.index_entry.docname=})"
+        return f"ObjectEntry({self.full_id=}, {self.object_type=}, {self.display_name=}, {self.index_entry.docname=})"  # noqa: E501
 
 
 # A simple helper just to document what the index tuple nodes are.
@@ -171,9 +167,7 @@ class _BzlObjectId:
             raise InvalidValueError("label must start with //")
 
         if not label.endswith(".bzl") and (symbol or namespace):
-            raise InvalidValueError(
-                "Symbol and namespace can only be specified for .bzl labels"
-            )
+            raise InvalidValueError("Symbol and namespace can only be specified for .bzl labels")
 
         self.repo = repo
         self.label = label
@@ -367,9 +361,7 @@ class _BzlXrefField(docfields.Field):
         bzl_file = env.ref_context["bzl:file"]
         anchor_prefix = ".".join(env.ref_context["bzl:doc_id_stack"])
         if not anchor_prefix:
-            raise InvalidValueError(
-                f"doc_id_stack empty when processing arg {arg_name}"
-            )
+            raise InvalidValueError(f"doc_id_stack empty when processing arg {arg_name}")
         index_description = f"{arg_name} ({self.name} in {bzl_file}%{anchor_prefix})"
         anchor_id = f"{anchor_prefix}.{arg_name}"
         full_id = _full_id_from_env(env, [arg_name])
@@ -417,9 +409,7 @@ class _BzlXrefField(docfields.Field):
 
         index_node = addnodes.index(
             entries=[
-                _index_node_tuple(
-                    "single", f"{self.name}; {index_description}", anchor_id
-                ),
+                _index_node_tuple("single", f"{self.name}; {index_description}", anchor_id),
                 _index_node_tuple("single", index_description, anchor_id),
             ]
         )
@@ -455,7 +445,7 @@ class _BzlCsvField(_BzlXrefField):
         field_text = item[1][0].astext()
         parts = [p.strip() for p in field_text.split(",")]
         field_body = docutils_nodes.field_body()
-        for _, is_last, part in _position_iter(parts):
+        for _i, is_last, part in _position_iter(parts):
             node = self.make_xref(
                 self.bodyrolename,
                 self._body_domain or domain,
@@ -608,8 +598,9 @@ class _BzlObject(sphinx_directives.ObjectDescription[_BzlObjectId]):
             root, class_name
         ) -> typing.Union[None, docutils_nodes.Element]:
             matches = root.findall(
-                lambda node: isinstance(node, docutils_nodes.Element)
-                and class_name in node["classes"]
+                lambda node: (
+                    isinstance(node, docutils_nodes.Element) and class_name in node["classes"]
+                )
             )
             found = next(matches, None)
             return found
@@ -628,9 +619,7 @@ class _BzlObject(sphinx_directives.ObjectDescription[_BzlObjectId]):
             arg_body_field = arg_name_field.next_node(descend=False, siblings=True)
             # arg_type_node = first_child_with_class_name(arg_body_field, "arg-type-span")
             arg_type_node = first_child_with_class_name(arg_body_field, "type-expr")
-            arg_default_node = first_child_with_class_name(
-                arg_body_field, "default-value-span"
-            )
+            arg_default_node = first_child_with_class_name(arg_body_field, "default-value-span")
 
             # Inserting into the body field itself causes the elements
             # to be grouped into the paragraph node containing the arg
@@ -663,9 +652,7 @@ class _BzlObject(sphinx_directives.ObjectDescription[_BzlObjectId]):
     # docs on how to build signatures:
     # https://www.sphinx-doc.org/en/master/extdev/nodes.html#sphinx.addnodes.desc_signature
     @override
-    def handle_signature(
-        self, sig_text: str, sig_node: addnodes.desc_signature
-    ) -> _BzlObjectId:
+    def handle_signature(self, sig_text: str, sig_node: addnodes.desc_signature) -> _BzlObjectId:
         self._signature_add_object_type(sig_node)
 
         relative_name, lparen, params_text = sig_text.partition("(")
@@ -767,7 +754,7 @@ class _BzlObject(sphinx_directives.ObjectDescription[_BzlObjectId]):
 
     def _signature_add_object_type(self, sig_node: addnodes.desc_signature):
         if sig_object_type := self._get_signature_object_type():
-            sig_node += addnodes.desc_annotation("", self._get_signature_object_type())
+            sig_node += addnodes.desc_annotation("", sig_object_type)
             sig_node += addnodes.desc_sig_space()
 
     @override
@@ -835,9 +822,7 @@ class _BzlObject(sphinx_directives.ObjectDescription[_BzlObjectId]):
         return []
 
     @override
-    def _object_hierarchy_parts(
-        self, sig_node: addnodes.desc_signature
-    ) -> tuple[str, ...]:
+    def _object_hierarchy_parts(self, sig_node: addnodes.desc_signature) -> tuple[str, ...]:
         return _parse_full_id(sig_node["bzl:object_id"])
 
     @override
@@ -1523,9 +1508,7 @@ class _BzlDomain(domains.Domain):
         "attr": domains.ObjType("attr", "attr", "obj"),  # rule attribute
         "function": domains.ObjType("function", "func", "obj"),
         "method": domains.ObjType("method", "method", "obj"),
-        "module-extension": domains.ObjType(
-            "module extension", "module_extension", "obj"
-        ),
+        "module-extension": domains.ObjType("module extension", "module_extension", "obj"),
         # Providers are close enough to types that we include "type". This
         # also makes :type: Foo work in directive options.
         "provider": domains.ObjType("provider", "provider", "type", "obj"),
@@ -1599,9 +1582,7 @@ class _BzlDomain(domains.Domain):
     }
 
     @override
-    def get_full_qualified_name(
-        self, node: docutils_nodes.Element
-    ) -> typing.Union[str, None]:
+    def get_full_qualified_name(self, node: docutils_nodes.Element) -> typing.Union[str, None]:
         bzl_file = node.get("bzl:file")
         symbol_name = node.get("bzl:symbol")
         ref_target = node.get("reftarget")
@@ -1646,9 +1627,7 @@ class _BzlDomain(domains.Domain):
         node: addnodes.pending_xref,
         contnode: docutils_nodes.Element,
     ) -> typing.Union[docutils_nodes.Element, None]:
-        _log_debug(
-            "resolve_xref: fromdocname=%s, typ=%s, target=%s", fromdocname, typ, target
-        )
+        _log_debug("resolve_xref: fromdocname=%s, typ=%s, target=%s", fromdocname, typ, target)
         del env, node  # Unused
         entry = self._find_entry_for_xref(fromdocname, typ, target)
         if not entry:
@@ -1695,9 +1674,7 @@ class _BzlDomain(domains.Domain):
             # Give preference to shorter object ids. This is a work around
             # to allow e.g. `FooInfo` to refer to the FooInfo type rather than
             # the `FooInfo` constructor.
-            entries = sorted(
-                self.data["alt_names"][target].items(), key=lambda item: len(item[0])
-            )
+            entries = sorted(self.data["alt_names"][target].items(), key=lambda item: len(item[0]))
             for _, entry in entries:
                 if object_type in self.object_types[entry.object_type].roles:
                     return entry
@@ -1767,9 +1744,7 @@ class _BzlDomain(domains.Domain):
                     del self.data["alt_names"][alt_name]
         del self.data["doc_names"][docname]
 
-    def merge_domaindata(
-        self, docnames: list[str], otherdata: dict[str, typing.Any]
-    ) -> None:
+    def merge_domaindata(self, docnames: list[str], otherdata: dict[str, typing.Any]) -> None:
         # Merge in simple dict[key, value] data
         for top_key in ("objects",):
             self.data[top_key].update(otherdata.get(top_key, {}))

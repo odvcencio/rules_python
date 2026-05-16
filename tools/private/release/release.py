@@ -30,8 +30,7 @@ def _iter_version_placeholder_files():
             d
             for d in dirs
             if not any(
-                fnmatch.fnmatch(os.path.join(root, d), pattern)
-                for pattern in _EXCLUDE_PATTERNS
+                fnmatch.fnmatch(os.path.join(root, d), pattern) for pattern in _EXCLUDE_PATTERNS
             )
         ]
 
@@ -156,9 +155,7 @@ def _semver_type(value):
 
 def create_parser():
     """Creates the argument parser."""
-    parser = argparse.ArgumentParser(
-        description="Automate release steps for rules_python."
-    )
+    parser = argparse.ArgumentParser(description="Automate release steps for rules_python.")
     parser.add_argument(
         "version",
         nargs="?",

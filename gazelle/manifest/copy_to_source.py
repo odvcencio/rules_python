@@ -6,7 +6,6 @@ Run like:
 
 import os
 import shutil
-import stat
 import sys
 from pathlib import Path
 
@@ -14,9 +13,10 @@ from pathlib import Path
 def copy_to_source(generated_relative_path: Path, target_relative_path: Path) -> None:
     """Copy the generated file to the target file path.
 
-    Expands the relative paths by looking at Bazel env vars to figure out which absolute paths to use.
+    Expands the relative paths by looking at Bazel env vars
+    to figure out which absolute paths to use.
     """
-    # This script normally gets executed from the runfiles dir, so find the absolute path to the generated file based on that.
+    # This script normally gets executed from the runfiles dir, so find the absolute path to the generated file based on that.  # noqa: E501
     generated_absolute_path = Path.cwd() / generated_relative_path
 
     # Similarly, the target is relative to the source directory.

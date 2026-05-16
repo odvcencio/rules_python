@@ -20,6 +20,7 @@
 import argparse
 import py_compile
 import sys
+import typing
 
 
 def _create_parser() -> "argparse.Namespace":
@@ -40,18 +41,12 @@ def _create_parser() -> "argparse.Namespace":
 
 def _compile(options: "argparse.Namespace") -> None:
     try:
-        invalidation_mode = py_compile.PycInvalidationMode[
-            options.invalidation_mode.upper()
-        ]
+        invalidation_mode = py_compile.PycInvalidationMode[options.invalidation_mode.upper()]
     except KeyError as e:
-        raise ValueError(
-            f"Unknown PycInvalidationMode: {options.invalidation_mode}"
-        ) from e
+        raise ValueError(f"Unknown PycInvalidationMode: {options.invalidation_mode}") from e
 
     if not (len(options.srcs) == len(options.src_names) == len(options.pycs)):
-        raise AssertionError(
-            "Mismatched number of --src, --src_name, and/or --pyc args"
-        )
+        raise AssertionError("Mismatched number of --src, --src_name, and/or --pyc args")
 
     for src, src_name, pyc in zip(options.srcs, options.src_names, options.pycs):
         py_compile.compile(
@@ -98,10 +93,7 @@ class _SerialPersistentWorker:
                         self._send_response(response)
                 except Exception:
                     _logger.exception("Unhandled error: request=%s", request)
-                    output = (
-                        f"Unhandled error:\nRequest: {request}\n"
-                        + traceback.format_exc()
-                    )
+                    output = f"Unhandled error:\nRequest: {request}\n" + traceback.format_exc()
                     request_id = 0 if not request else request.get("requestId", 0)
                     self._send_response(
                         {
@@ -130,9 +122,7 @@ class _SerialPersistentWorker:
         }
         return response
 
-    def _options_from_request(
-        self, request: "JsonWorkResponse"
-    ) -> "argparse.Namespace":
+    def _options_from_request(self, request: "JsonWorkResponse") -> "argparse.Namespace":
         options = self._parser.parse_args(request["arguments"])
         if request.get("sandboxDir"):
             prefix = request["sandboxDir"]
@@ -180,9 +170,7 @@ class _AsyncPersistentWorker:
             _logger.info("pending requests: %s", len(self._request_id_to_task))
             request = await self._get_next_request()
             request_id = request.get("requestId", 0)
-            task = asyncio.create_task(
-                self._process_request(request), name=f"request_{request_id}"
-            )
+            task = asyncio.create_task(self._process_request(request), name=f"request_{request_id}")
             self._request_id_to_task[request_id] = task
             self._task_to_request_id[task] = request_id
             task.add_done_callback(self._handle_task_done)
@@ -219,8 +207,7 @@ class _AsyncPersistentWorker:
             self._send_response(
                 {
                     "exitCode": 3,
-                    "output": f"Unhandled error:\nRequest: {request}\n"
-                    + traceback.format_exc(),
+                    "output": f"Unhandled error:\nRequest: {request}\n" + traceback.format_exc(),
                     "requestId": 0 if not request else request.get("requestId", 0),
                 }
             )

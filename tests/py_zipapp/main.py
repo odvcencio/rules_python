@@ -14,9 +14,7 @@ def main():
     except ImportError as e:
         import sys
 
-        e.add_note(
-            "Failed to import a dependency.\n" + "sys.path:\n" + "\n".join(sys.path)
-        )
+        e.add_note("Failed to import a dependency.\n" + "sys.path:\n" + "\n".join(sys.path))
         raise
 
 

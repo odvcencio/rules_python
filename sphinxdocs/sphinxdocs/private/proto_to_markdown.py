@@ -13,11 +13,9 @@
 # limitations under the License.
 
 import argparse
-import io
 import itertools
 import pathlib
 import sys
-import textwrap
 from typing import Callable, TextIO, TypeVar
 
 from stardoc.proto import stardoc_output_pb2
@@ -133,10 +131,7 @@ class _MySTRenderer:
                 (m.extension_name, m, self._render_module_extension)
                 for m in module.module_extension_info
             ),
-            (
-                (r.rule_name, r, self._render_repository_rule)
-                for r in module.repository_rule_info
-            ),
+            ((r.rule_name, r, self._render_repository_rule) for r in module.repository_rule_info),
         )
         # Sort by name, ignoring case. The `.TYPEDEF` string is removed so
         # that the .TYPEDEF entries come before what is in the typedef.
@@ -154,9 +149,7 @@ class _MySTRenderer:
     def _process_object(self, name, obj, renderer):
         # The trailing doc is added to prevent matching a common prefix
         typedef_group = name.removesuffix(".TYPEDEF") + "."
-        while self._typedef_stack and not typedef_group.startswith(
-            self._typedef_stack[-1]
-        ):
+        while self._typedef_stack and not typedef_group.startswith(self._typedef_stack[-1]):
             self._typedef_stack.pop()
             self._render_typedef_end()
         renderer(obj)
@@ -456,9 +449,7 @@ class _MySTRenderer:
 
             if attr.provider_name_group:
                 self._write("  {required-providers}`")
-                for _, outer_is_last, provider_group in _position_iter(
-                    attr.provider_name_group
-                ):
+                for _, outer_is_last, provider_group in _position_iter(attr.provider_name_group):
                     pairs = list(
                         zip(
                             provider_group.origin_key,

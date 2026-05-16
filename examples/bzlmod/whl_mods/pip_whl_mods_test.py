@@ -71,9 +71,7 @@ class PipWhlModsTest(unittest.TestCase):
         self.assertEqual(content, "Hello world from copied file")
 
     def test_copy_executables(self):
-        executable_name = (
-            "executable.exe" if platform.system() == "windows" else "executable.py"
-        )
+        executable_name = "executable.exe" if platform.system() == "windows" else "executable.py"
 
         r = runfiles.Create()
         rpath = r.Rlocation(
@@ -111,9 +109,7 @@ class PipWhlModsTest(unittest.TestCase):
         wheel_path = r.Rlocation("{}/WHEEL".format(dist_info_dir))
 
         self.assertTrue(Path(metadata_path).exists(), f"Could not find {metadata_path}")
-        self.assertFalse(
-            Path(wheel_path).exists(), f"Expected to not find {wheel_path}"
-        )
+        self.assertFalse(Path(wheel_path).exists(), f"Expected to not find {wheel_path}")
 
     def test_extra(self):
         # This test verifies that annotations work correctly for pip packages with extras

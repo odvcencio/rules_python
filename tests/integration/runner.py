@@ -49,8 +49,7 @@ class ExecuteResult:
 
     def describe(self) -> str:
         env_lines = [
-            "  " + shlex.quote(f"{key}={value}")
-            for key, value in sorted(self.env.items())
+            "  " + shlex.quote(f"{key}={value}") for key, value in sorted(self.env.items())
         ]
         env = " \\\n".join(env_lines)
         args = shlex.join(self.args)

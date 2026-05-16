@@ -62,15 +62,9 @@ try:
     elif "GNU readline" in readline.__doc__:  # type: ignore
         readline.parse_and_bind("tab: complete")
     else:
-        print(
-            "Could not enable tab completion: "
-            "unable to determine readline backend"
-        )
+        print("Could not enable tab completion: unable to determine readline backend")
 except ImportError:
-    print(
-        "Could not enable tab completion: "
-        "readline module not available on this platform"
-    )
+    print("Could not enable tab completion: readline module not available on this platform")
 
 # We set the banner to an empty string because the repl_template.py file already prints the banner.
 code.interact(local=console_locals, banner="", exitmsg=exitmsg)

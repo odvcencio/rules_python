@@ -32,33 +32,15 @@ class RunfilesTest(unittest.TestCase):
         self.assertRaises(ValueError, lambda: r.Rlocation(None))  # type: ignore
         self.assertRaises(ValueError, lambda: r.Rlocation(""))
         self.assertRaises(TypeError, lambda: r.Rlocation(1))  # type: ignore
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("../foo")
-        )
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("foo/..")
-        )
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("foo/../bar")
-        )
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("./foo")
-        )
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("foo/.")
-        )
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("foo/./bar")
-        )
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("//foobar")
-        )
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("foo//")
-        )
-        self.assertRaisesRegex(
-            ValueError, "is not normalized", lambda: r.Rlocation("foo//bar")
-        )
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("../foo"))
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("foo/.."))
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("foo/../bar"))
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("./foo"))
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("foo/."))
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("foo/./bar"))
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("//foobar"))
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("foo//"))
+        self.assertRaisesRegex(ValueError, "is not normalized", lambda: r.Rlocation("foo//bar"))
         self.assertRaisesRegex(
             ValueError,
             "is absolute without a drive letter",
@@ -68,9 +50,7 @@ class RunfilesTest(unittest.TestCase):
     def testRlocationWithData(self) -> None:
         r = runfiles.Create()
         assert r is not None  # mypy doesn't understand the unittest api.
-        settings_path = r.Rlocation(
-            "rules_python/tests/support/current_build_settings.json"
-        )
+        settings_path = r.Rlocation("rules_python/tests/support/current_build_settings.json")
         assert settings_path is not None
         settings = json.loads(pathlib.Path(settings_path).read_text())
         self.assertIn("bootstrap_impl", settings)
@@ -118,12 +98,8 @@ class RunfilesTest(unittest.TestCase):
                 r.EnvVars(),
                 {
                     "RUNFILES_MANIFEST_FILE": mf.Path(),
-                    "RUNFILES_DIR": (
-                        mf.Path()[: -len("foo.runfiles_manifest")] + "foo.runfiles"
-                    ),
-                    "JAVA_RUNFILES": (
-                        mf.Path()[: -len("foo.runfiles_manifest")] + "foo.runfiles"
-                    ),
+                    "RUNFILES_DIR": (mf.Path()[: -len("foo.runfiles_manifest")] + "foo.runfiles"),
+                    "JAVA_RUNFILES": (mf.Path()[: -len("foo.runfiles_manifest")] + "foo.runfiles"),
                 },
             )
 
@@ -208,9 +184,7 @@ class RunfilesTest(unittest.TestCase):
             r = runfiles.CreateManifestBased(mf.Path())
             self.assertEqual(r.Rlocation("Foo/runfile1"), "Foo/runfile1")
             self.assertEqual(r.Rlocation("Foo/runfile2"), "C:/Actual Path\\runfile2")
-            self.assertEqual(
-                r.Rlocation("Foo/Bar/runfile3"), "D:\\the path\\run file 3.txt"
-            )
+            self.assertEqual(r.Rlocation("Foo/Bar/runfile3"), "D:\\the path\\run file 3.txt")
             self.assertEqual(
                 r.Rlocation("Foo/Bar/Dir/runfile4"),
                 "E:\\Actual Path\\Directory/runfile4",
@@ -231,24 +205,27 @@ class RunfilesTest(unittest.TestCase):
                 self.assertEqual(r.Rlocation("/foo"), "/foo")
 
     def testManifestBasedRlocationWithRepoMappingFromMain(self) -> None:
-        with _MockFile(
-            contents=[
-                ",config.json,config.json~1.2.3",
-                ",my_module,_main",
-                ",my_protobuf,protobuf~3.19.2",
-                ",my_workspace,_main",
-                "protobuf~3.19.2,config.json,config.json~1.2.3",
-                "protobuf~3.19.2,protobuf,protobuf~3.19.2",
-            ]
-        ) as rm, _MockFile(
-            contents=[
-                "_repo_mapping " + rm.Path(),
-                "config.json /etc/config.json",
-                "protobuf~3.19.2/foo/runfile C:/Actual Path\\protobuf\\runfile",
-                "_main/bar/runfile /the/path/./to/other//other runfile.txt",
-                "protobuf~3.19.2/bar/dir E:\\Actual Path\\Directory",
-            ],
-        ) as mf:
+        with (
+            _MockFile(
+                contents=[
+                    ",config.json,config.json~1.2.3",
+                    ",my_module,_main",
+                    ",my_protobuf,protobuf~3.19.2",
+                    ",my_workspace,_main",
+                    "protobuf~3.19.2,config.json,config.json~1.2.3",
+                    "protobuf~3.19.2,protobuf,protobuf~3.19.2",
+                ]
+            ) as rm,
+            _MockFile(
+                contents=[
+                    "_repo_mapping " + rm.Path(),
+                    "config.json /etc/config.json",
+                    "protobuf~3.19.2/foo/runfile C:/Actual Path\\protobuf\\runfile",
+                    "_main/bar/runfile /the/path/./to/other//other runfile.txt",
+                    "protobuf~3.19.2/bar/dir E:\\Actual Path\\Directory",
+                ],
+            ) as mf,
+        ):
             r = runfiles.CreateManifestBased(mf.Path())
 
             self.assertEqual(
@@ -263,9 +240,7 @@ class RunfilesTest(unittest.TestCase):
                 r.Rlocation("my_protobuf/foo/runfile", ""),
                 "C:/Actual Path\\protobuf\\runfile",
             )
-            self.assertEqual(
-                r.Rlocation("my_protobuf/bar/dir", ""), "E:\\Actual Path\\Directory"
-            )
+            self.assertEqual(r.Rlocation("my_protobuf/bar/dir", ""), "E:\\Actual Path\\Directory")
             self.assertEqual(
                 r.Rlocation("my_protobuf/bar/dir/file", ""),
                 "E:\\Actual Path\\Directory/file",
@@ -306,24 +281,27 @@ class RunfilesTest(unittest.TestCase):
             self.assertIsNone(r.Rlocation("protobuf", ""))
 
     def testManifestBasedRlocationWithRepoMappingFromOtherRepo(self) -> None:
-        with _MockFile(
-            contents=[
-                ",config.json,config.json~1.2.3",
-                ",my_module,_main",
-                ",my_protobuf,protobuf~3.19.2",
-                ",my_workspace,_main",
-                "protobuf~3.19.2,config.json,config.json~1.2.3",
-                "protobuf~3.19.2,protobuf,protobuf~3.19.2",
-            ]
-        ) as rm, _MockFile(
-            contents=[
-                "_repo_mapping " + rm.Path(),
-                "config.json /etc/config.json",
-                "protobuf~3.19.2/foo/runfile C:/Actual Path\\protobuf\\runfile",
-                "_main/bar/runfile /the/path/./to/other//other runfile.txt",
-                "protobuf~3.19.2/bar/dir E:\\Actual Path\\Directory",
-            ],
-        ) as mf:
+        with (
+            _MockFile(
+                contents=[
+                    ",config.json,config.json~1.2.3",
+                    ",my_module,_main",
+                    ",my_protobuf,protobuf~3.19.2",
+                    ",my_workspace,_main",
+                    "protobuf~3.19.2,config.json,config.json~1.2.3",
+                    "protobuf~3.19.2,protobuf,protobuf~3.19.2",
+                ]
+            ) as rm,
+            _MockFile(
+                contents=[
+                    "_repo_mapping " + rm.Path(),
+                    "config.json /etc/config.json",
+                    "protobuf~3.19.2/foo/runfile C:/Actual Path\\protobuf\\runfile",
+                    "_main/bar/runfile /the/path/./to/other//other runfile.txt",
+                    "protobuf~3.19.2/bar/dir E:\\Actual Path\\Directory",
+                ],
+            ) as mf,
+        ):
             r = runfiles.CreateManifestBased(mf.Path())
 
             self.assertEqual(
@@ -339,22 +317,16 @@ class RunfilesTest(unittest.TestCase):
                 "E:\\Actual Path\\Directory/file",
             )
             self.assertEqual(
-                r.Rlocation(
-                    "protobuf/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"
-                ),
+                r.Rlocation("protobuf/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"),
                 "E:\\Actual Path\\Directory/de eply/nes  ted/fi~le",
             )
 
             self.assertIsNone(r.Rlocation("my_module/bar/runfile", "protobuf~3.19.2"))
             self.assertIsNone(r.Rlocation("my_protobuf/foo/runfile", "protobuf~3.19.2"))
             self.assertIsNone(r.Rlocation("my_protobuf/bar/dir", "protobuf~3.19.2"))
+            self.assertIsNone(r.Rlocation("my_protobuf/bar/dir/file", "protobuf~3.19.2"))
             self.assertIsNone(
-                r.Rlocation("my_protobuf/bar/dir/file", "protobuf~3.19.2")
-            )
-            self.assertIsNone(
-                r.Rlocation(
-                    "my_protobuf/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"
-                )
+                r.Rlocation("my_protobuf/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2")
             )
 
             self.assertEqual(
@@ -374,15 +346,11 @@ class RunfilesTest(unittest.TestCase):
                 "E:\\Actual Path\\Directory/file",
             )
             self.assertEqual(
-                r.Rlocation(
-                    "protobuf~3.19.2/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"
-                ),
+                r.Rlocation("protobuf~3.19.2/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"),
                 "E:\\Actual Path\\Directory/de eply/nes  ted/fi~le",
             )
 
-            self.assertEqual(
-                r.Rlocation("config.json", "protobuf~3.19.2"), "/etc/config.json"
-            )
+            self.assertEqual(r.Rlocation("config.json", "protobuf~3.19.2"), "/etc/config.json")
             self.assertIsNone(r.Rlocation("_main", "protobuf~3.19.2"))
             self.assertIsNone(r.Rlocation("my_module", "protobuf~3.19.2"))
             self.assertIsNone(r.Rlocation("protobuf", "protobuf~3.19.2"))
@@ -414,9 +382,7 @@ class RunfilesTest(unittest.TestCase):
             dir = os.path.dirname(rm.Path())
             r = runfiles.CreateDirectoryBased(dir)
 
-            self.assertEqual(
-                r.Rlocation("my_module/bar/runfile", ""), dir + "/_main/bar/runfile"
-            )
+            self.assertEqual(r.Rlocation("my_module/bar/runfile", ""), dir + "/_main/bar/runfile")
             self.assertEqual(
                 r.Rlocation("my_workspace/bar/runfile", ""), dir + "/_main/bar/runfile"
             )
@@ -436,17 +402,13 @@ class RunfilesTest(unittest.TestCase):
                 dir + "/protobuf~3.19.2/bar/dir/de eply/nes ted/fi~le",
             )
 
-            self.assertEqual(
-                r.Rlocation("protobuf/foo/runfile", ""), dir + "/protobuf/foo/runfile"
-            )
+            self.assertEqual(r.Rlocation("protobuf/foo/runfile", ""), dir + "/protobuf/foo/runfile")
             self.assertEqual(
                 r.Rlocation("protobuf/bar/dir/dir/de eply/nes ted/fi~le", ""),
                 dir + "/protobuf/bar/dir/dir/de eply/nes ted/fi~le",
             )
 
-            self.assertEqual(
-                r.Rlocation("_main/bar/runfile", ""), dir + "/_main/bar/runfile"
-            )
+            self.assertEqual(r.Rlocation("_main/bar/runfile", ""), dir + "/_main/bar/runfile")
             self.assertEqual(
                 r.Rlocation("protobuf~3.19.2/foo/runfile", ""),
                 dir + "/protobuf~3.19.2/foo/runfile",
@@ -494,9 +456,7 @@ class RunfilesTest(unittest.TestCase):
                 dir + "/protobuf~3.19.2/bar/dir/file",
             )
             self.assertEqual(
-                r.Rlocation(
-                    "protobuf/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"
-                ),
+                r.Rlocation("protobuf/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"),
                 dir + "/protobuf~3.19.2/bar/dir/de eply/nes  ted/fi~le",
             )
 
@@ -505,9 +465,7 @@ class RunfilesTest(unittest.TestCase):
                 dir + "/my_module/bar/runfile",
             )
             self.assertEqual(
-                r.Rlocation(
-                    "my_protobuf/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"
-                ),
+                r.Rlocation("my_protobuf/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"),
                 dir + "/my_protobuf/bar/dir/de eply/nes  ted/fi~le",
             )
 
@@ -528,15 +486,11 @@ class RunfilesTest(unittest.TestCase):
                 dir + "/protobuf~3.19.2/bar/dir/file",
             )
             self.assertEqual(
-                r.Rlocation(
-                    "protobuf~3.19.2/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"
-                ),
+                r.Rlocation("protobuf~3.19.2/bar/dir/de eply/nes  ted/fi~le", "protobuf~3.19.2"),
                 dir + "/protobuf~3.19.2/bar/dir/de eply/nes  ted/fi~le",
             )
 
-            self.assertEqual(
-                r.Rlocation("config.json", "protobuf~3.19.2"), dir + "/config.json"
-            )
+            self.assertEqual(r.Rlocation("config.json", "protobuf~3.19.2"), dir + "/config.json")
 
     def testDirectoryBasedRlocationWithCompactRepoMappingFromMain(self) -> None:
         """Test repository mapping with prefix-based entries (compact format)."""
@@ -547,7 +501,7 @@ class RunfilesTest(unittest.TestCase):
                 "_,config.json,config.json~1.2.3",
                 ",my_module,_main",
                 ",my_workspace,_main",
-                # Prefixed mappings (with asterisk) - these apply to any repo starting with the prefix
+                # Prefixed mappings (with asterisk) - these apply to any repo starting with the prefix  # noqa: E501
                 "deps+*,external_dep,external_dep~1.0.0",
                 "test_deps+*,test_lib,test_lib~2.1.0",
             ],
@@ -556,9 +510,7 @@ class RunfilesTest(unittest.TestCase):
             r = runfiles.CreateDirectoryBased(dir)
 
             # Test exact mappings still work
-            self.assertEqual(
-                r.Rlocation("my_module/bar/runfile", ""), dir + "/_main/bar/runfile"
-            )
+            self.assertEqual(r.Rlocation("my_module/bar/runfile", ""), dir + "/_main/bar/runfile")
             self.assertEqual(
                 r.Rlocation("my_workspace/bar/runfile", ""), dir + "/_main/bar/runfile"
             )
@@ -714,9 +666,7 @@ class RunfilesTest(unittest.TestCase):
 
 
 class _MockFile:
-    def __init__(
-        self, name: Optional[str] = None, contents: Optional[List[Any]] = None
-    ) -> None:
+    def __init__(self, name: Optional[str] = None, contents: Optional[List[Any]] = None) -> None:
         self._contents = contents or []
         self._name = name or "x"
         self._path: Optional[str] = None
@@ -725,7 +675,7 @@ class _MockFile:
         tmpdir = os.environ.get("TEST_TMPDIR")
         self._path = os.path.join(tempfile.mkdtemp(dir=tmpdir), self._name)
         with open(self._path, "wt", encoding="utf-8", newline="\n") as f:
-            f.writelines(l + "\n" for l in self._contents)
+            f.writelines(line + "\n" for line in self._contents)
         return self
 
     def __exit__(

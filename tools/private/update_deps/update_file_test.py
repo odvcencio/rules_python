@@ -30,7 +30,6 @@ But it has to be in the beginning of the line to mark the end of a region.
 
 After the snippet
 """
-        snippet = "Replaced"
         got = replace_snippet(
             current=current,
             snippet="Replaced",

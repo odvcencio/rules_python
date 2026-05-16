@@ -143,9 +143,7 @@ def find_binary(runfiles_root, bin_name):
         return None
     if bin_name.startswith("//"):
         # Case 1: Path is a label. Not supported yet.
-        raise AssertionError(
-            "Bazel does not support execution of Python interpreters via labels"
-        )
+        raise AssertionError("Bazel does not support execution of Python interpreters via labels")
     elif os.path.isabs(bin_name):
         # Case 2: Absolute path.
         return bin_name
@@ -298,9 +296,7 @@ def finish_venv_setup(runfiles_root):
         # The venv bin/python3 interpreter should always be under runfiles, but
         # double check. We don't want to accidentally create symlinks elsewhere
         if not python_program.startswith(runfiles_root):
-            raise AssertionError(
-                "Program's venv binary not under runfiles: {python_program}"
-            )
+            raise AssertionError("Program's venv binary not under runfiles: {python_program}")
         symlink_to = find_binary(runfiles_root, _PYTHON_BINARY_ACTUAL)
         os.makedirs(dirname(python_program), exist_ok=True)
         if os.path.lexists(python_program):
@@ -357,21 +353,15 @@ def main():
 
     main_filename = join(runfiles_root, main_rel_path)
     main_filename = get_windows_path_with_unc_prefix(main_filename)
-    assert os.path.exists(main_filename), (
-        "Cannot exec() %r: file not found." % main_filename
-    )
-    assert os.access(main_filename, os.R_OK), (
-        "Cannot exec() %r: file not readable." % main_filename
-    )
+    assert os.path.exists(main_filename), "Cannot exec() %r: file not found." % main_filename
+    assert os.access(main_filename, os.R_OK), "Cannot exec() %r: file not readable." % main_filename
 
     if _PYTHON_BINARY_VENV:
         python_program = finish_venv_setup(runfiles_root)
     else:
         python_program = find_binary(runfiles_root, _PYTHON_BINARY_ACTUAL)
         if python_program is None:
-            raise AssertionError(
-                "Could not find python binary: " + _PYTHON_BINARY_ACTUAL
-            )
+            raise AssertionError("Could not find python binary: " + _PYTHON_BINARY_ACTUAL)
 
     # Some older Python versions on macOS (namely Python 3.7) may unintentionally
     # leave this environment variable set after starting the interpreter, which

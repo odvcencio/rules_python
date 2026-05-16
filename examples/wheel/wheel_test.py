@@ -39,9 +39,7 @@ class WheelTest(unittest.TestCase):
             raise AssertionError(f"Runfiles failed to resolve {runfiles_path}")
         elif not os.path.exists(path):
             # A non-None value doesn't mean the file actually exists, though
-            raise AssertionError(
-                f"Path {path} does not exist (from runfiles path {runfiles_path}"
-            )
+            raise AssertionError(f"Path {path} does not exist (from runfiles path {runfiles_path}")
         else:
             return path
 
@@ -64,9 +62,7 @@ class WheelTest(unittest.TestCase):
                 (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO | stat.S_IFREG) << 16,
                 msg=zinfo.filename,
             )
-            self.assertEqual(
-                zinfo.compress_type, zipfile.ZIP_DEFLATED, msg=zinfo.filename
-            )
+            self.assertEqual(zinfo.compress_type, zipfile.ZIP_DEFLATED, msg=zinfo.filename)
 
     def test_py_library_wheel(self):
         filename = self._get_path("example_minimal_library-0.0.1-py3-none-any.whl")
@@ -140,9 +136,7 @@ class WheelTest(unittest.TestCase):
             record_contents = zf.read("example_customized-0.0.1.dist-info/RECORD")
             wheel_contents = zf.read("example_customized-0.0.1.dist-info/WHEEL")
             metadata_contents = zf.read("example_customized-0.0.1.dist-info/METADATA")
-            entry_point_contents = zf.read(
-                "example_customized-0.0.1.dist-info/entry_points.txt"
-            )
+            entry_point_contents = zf.read("example_customized-0.0.1.dist-info/entry_points.txt")
 
             print(record_contents)
             self.assertEqual(
@@ -232,9 +226,7 @@ second = second.main:s""",
                     "file_name_escaping-0.0.1rc1+ubuntu.r7.dist-info/RECORD",
                 ],
             )
-            metadata_contents = zf.read(
-                "file_name_escaping-0.0.1rc1+ubuntu.r7.dist-info/METADATA"
-            )
+            metadata_contents = zf.read("file_name_escaping-0.0.1rc1+ubuntu.r7.dist-info/METADATA")
             self.assertEqual(
                 metadata_contents,
                 b"""\
@@ -270,9 +262,9 @@ UNKNOWN
                 ],
             )
 
-            record_contents = zf.read(
-                "examples_custom_package_root-0.0.1.dist-info/RECORD"
-            ).decode("utf-8")
+            record_contents = zf.read("examples_custom_package_root-0.0.1.dist-info/RECORD").decode(
+                "utf-8"
+            )
 
             # Ensure RECORD files do not have leading forward slashes
             for line in record_contents.splitlines():
@@ -390,9 +382,7 @@ UNKNOWN
         )
         with zipfile.ZipFile(filename) as zf:
             self.assertAllEntriesHasReproducibleMetadata(zf)
-            metadata_contents = zf.read(
-                "example_python_abi3_binary_wheel-0.0.1.dist-info/METADATA"
-            )
+            metadata_contents = zf.read("example_python_abi3_binary_wheel-0.0.1.dist-info/METADATA")
             # The entries are guaranteed to be sorted.
             self.assertEqual(
                 metadata_contents,
@@ -405,9 +395,7 @@ Version: 0.0.1
 UNKNOWN
 """,
             )
-            wheel_contents = zf.read(
-                "example_python_abi3_binary_wheel-0.0.1.dist-info/WHEEL"
-            )
+            wheel_contents = zf.read("example_python_abi3_binary_wheel-0.0.1.dist-info/WHEEL")
             self.assertEqual(
                 wheel_contents.decode(),
                 f"""\
@@ -489,8 +477,8 @@ Tag: cp38-abi3-{os_string}_{arch}
                     "Requires-Dist: tomli>=2.0.0",
                     "Requires-Dist: starlark",
                     "Requires-Dist: pyyaml!=6.0.1,>=6.0.0; extra == 'example'",
-                    'Requires-Dist: toml; ((python_version == "3.11" or python_version == "3.12") and python_version != "3.8") and extra == \'example\'',
-                    'Requires-Dist: wheel; (python_version == "3.11" or python_version == "3.12") and extra == \'example\'',
+                    'Requires-Dist: toml; ((python_version == "3.11" or python_version == "3.12") and python_version != "3.8") and extra == \'example\'',  # noqa: E501
+                    'Requires-Dist: wheel; (python_version == "3.11" or python_version == "3.12") and extra == \'example\'',  # noqa: E501
                 ],
                 requires,
             )
@@ -523,7 +511,6 @@ Tag: cp38-abi3-{os_string}_{arch}
 
         with zipfile.ZipFile(filename) as zf:
             self.assertAllEntriesHasReproducibleMetadata(zf)
-            metadata_file = None
             self.assertEqual(
                 zf.namelist(),
                 [
@@ -559,8 +546,8 @@ Tag: cp38-abi3-{os_string}_{arch}
                     "Requires-Dist: starlark",
                     'Requires-Dist: pytest; python_version != "3.8"',
                     "Requires-Dist: pyyaml!=6.0.1,>=6.0.0; extra == 'example'",
-                    'Requires-Dist: toml; ((python_version == "3.11" or python_version == "3.12") and python_version != "3.8") and extra == \'example\'',
-                    'Requires-Dist: wheel; (python_version == "3.11" or python_version == "3.12") and extra == \'example\'',
+                    'Requires-Dist: toml; ((python_version == "3.11" or python_version == "3.12") and python_version != "3.8") and extra == \'example\'',  # noqa: E501
+                    'Requires-Dist: wheel; (python_version == "3.11" or python_version == "3.12") and extra == \'example\'',  # noqa: E501
                 ],
                 requires,
             )
@@ -591,7 +578,9 @@ Tag: cp38-abi3-{os_string}_{arch}
             )
 
     def test_requires_dist_depends_on_extras_file(self):
-        filename = self._get_path("requires_dist_depends_on_extras_using_file-0.0.1-py3-none-any.whl")
+        filename = self._get_path(
+            "requires_dist_depends_on_extras_using_file-0.0.1-py3-none-any.whl"
+        )
 
         with zipfile.ZipFile(filename) as zf:
             self.assertAllEntriesHasReproducibleMetadata(zf)
@@ -616,9 +605,7 @@ Tag: cp38-abi3-{os_string}_{arch}
             )
 
     def test_data_files_installed_in_folder(self):
-        filename = self._get_path(
-            "data_files_installed_in_folder-0.0.1-py3-none-any.whl"
-        )
+        filename = self._get_path("data_files_installed_in_folder-0.0.1-py3-none-any.whl")
 
         with zipfile.ZipFile(filename) as zf:
             self.assertAllEntriesHasReproducibleMetadata(zf)

@@ -1,5 +1,4 @@
 import importlib
-import os
 import sys
 import sysconfig
 import unittest
@@ -26,7 +25,8 @@ class VenvSitePackagesLibraryTest(unittest.TestCase):
         path = self.venv / rel_path
         self.assertTrue(
             path.exists(),
-            f"Expected {path} to exist. {path.parent.name} contents: {list(path.parent.iterdir()) if path.parent.exists() else 'N/A'}",
+            f"Expected {path} to exist. {path.parent.name} contents:"  # noqa: E501
+            f" {list(path.parent.iterdir()) if path.parent.exists() else 'N/A'}",
         )
 
     def assert_imported_from_venv(self, module_name):
@@ -34,8 +34,7 @@ class VenvSitePackagesLibraryTest(unittest.TestCase):
         self.assertEqual(module.__name__, module_name)
         self.assertIsNotNone(
             module.__file__,
-            f"Expected module {module_name!r} to have"
-            + f"__file__ set, but got None. {module=}",
+            f"Expected module {module_name!r} to have" + f"__file__ set, but got None. {module=}",
         )
         self.assertTrue(
             module.__file__.startswith(str(self.venv)),
@@ -65,7 +64,7 @@ class VenvSitePackagesLibraryTest(unittest.TestCase):
 
     def test_data_is_included(self):
         self.assert_imported_from_venv("simple")
-        module = importlib.import_module("simple")
+        _ = importlib.import_module("simple")
         # Ensure that packages from simple v1 are not present
         files = [p.name for p in self.site_packages.glob("*")]
         self.assertIn("simple_v1_extras", files)
@@ -80,7 +79,7 @@ class VenvSitePackagesLibraryTest(unittest.TestCase):
 
     def test_dirs_from_replaced_package_are_not_present(self):
         self.assert_imported_from_venv("simple")
-        module = importlib.import_module("simple")
+        importlib.import_module("simple")
         dist_info_dirs = [p.name for p in self.site_packages.glob("simple*.dist-info")]
         self.assertEqual(
             ["simple-1.0.0.dist-info"],
@@ -93,24 +92,20 @@ class VenvSitePackagesLibraryTest(unittest.TestCase):
 
     def test_data_from_another_pkg_is_included_via_copy_file(self):
         self.assert_imported_from_venv("simple")
-        module = importlib.import_module("simple")
+        importlib.import_module("simple")
         # Ensure that packages from simple v1 are not present
         d = self.site_packages / "external_data"
         files = [p.name for p in d.glob("*")]
         self.assertIn("another_module_data.txt", files)
 
     def test_whl_with_data1_included(self):
-        module = self.assert_imported_from_venv("whl_with_data1")
+        self.assert_imported_from_venv("whl_with_data1")
         site_packages_rel = self.site_packages.relative_to(self.venv)
         # purelib
         self.assert_venv_path_exists(site_packages_rel / "whl_with_data1/data_file.txt")
 
         # platlib
-        self.assert_venv_path_exists(
-            site_packages_rel / "whl_with_data1/platlib_file.txt"
-        )
-
-        venv_root = self.venv
+        self.assert_venv_path_exists(site_packages_rel / "whl_with_data1/platlib_file.txt")
 
         # data
         self.assert_venv_path_exists("whl_with_data1/data_data_file.txt")
@@ -119,12 +114,10 @@ class VenvSitePackagesLibraryTest(unittest.TestCase):
         self.assert_venv_path_exists(self.bin_dir_name / "whl_script.sh")
 
         # headers
-        self.assert_venv_path_exists(
-            self.include_dir_name / "whl_with_data1/header_file.h"
-        )
+        self.assert_venv_path_exists(self.include_dir_name / "whl_with_data1/header_file.h")
 
     def test_whl_with_data2_included(self):
-        module = self.assert_imported_from_venv("whl_with_data2")
+        self.assert_imported_from_venv("whl_with_data2")
 
         site_packages_rel = self.site_packages.relative_to(self.venv)
         self.assert_venv_path_exists(site_packages_rel / "whl_with_data2/data_file.txt")
@@ -135,9 +128,7 @@ class VenvSitePackagesLibraryTest(unittest.TestCase):
         # and then linked as `venv/whl_with_data1/data_data_file.txt`.
         self.assert_venv_path_exists("whl_with_data2/data_data_file.txt")
 
-        self.assert_venv_path_exists(
-            self.include_dir_name / "whl_with_data2/header_file.h"
-        )
+        self.assert_venv_path_exists(self.include_dir_name / "whl_with_data2/header_file.h")
 
     def test_whl_with_data_overlap(self):
         self.assert_venv_path_exists("overlap/both.txt")

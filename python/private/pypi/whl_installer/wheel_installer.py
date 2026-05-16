@@ -18,12 +18,10 @@ import errno
 import glob
 import json
 import os
-import re
 import subprocess
 import sys
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Dict, List, Optional, Set, Tuple
 
 from python.private.pypi.whl_installer import arguments
 
@@ -34,7 +32,7 @@ def _configure_reproducible_wheels() -> None:
     patching in some configuration with environment variables.
     """
 
-    # wheel, by default, enables debug symbols in GCC. This incidentally captures the build path in the .so file
+    # wheel, by default, enables debug symbols in GCC. This incidentally captures the build path in the .so file  # noqa: E501
     # We can override this behavior by disabling debug symbols entirely.
     # https://github.com/pypa/pip/issues/6505
     if "CFLAGS" in os.environ:

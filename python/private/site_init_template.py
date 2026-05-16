@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """site initialization logic for Bazel-built py_binary targets."""
+
 import os
 import os.path
 import sys
@@ -58,16 +59,14 @@ def _find_runfiles_root():
     runfiles_dir = os.environ.get("RUNFILES_DIR", None)
     if not runfiles_dir:
         runfiles_manifest_file = os.environ.get("RUNFILES_MANIFEST_FILE", "")
-        if runfiles_manifest_file.endswith(
-            ".runfiles_manifest"
-        ) or runfiles_manifest_file.endswith(".runfiles/MANIFEST"):
+        if runfiles_manifest_file.endswith(".runfiles_manifest") or runfiles_manifest_file.endswith(
+            ".runfiles/MANIFEST"
+        ):
             runfiles_dir = runfiles_manifest_file[:-9]
 
     # Be defensive: the runfiles dir should contain ourselves. If it doesn't,
     # then it must not be our runfiles directory.
-    if runfiles_dir and os.path.exists(
-        os.path.join(runfiles_dir, _SELF_RUNFILES_RELATIVE_PATH)
-    ):
+    if runfiles_dir and os.path.exists(os.path.join(runfiles_dir, _SELF_RUNFILES_RELATIVE_PATH)):
         return runfiles_dir
 
     num_dirs_to_runfiles_root = _SELF_RUNFILES_RELATIVE_PATH.count("/") + 1
@@ -159,9 +158,7 @@ def _setup_sys_path():
         _maybe_add_path(abs_path, "imports-strs")
 
     if _IMPORT_ALL:
-        repo_dirs = sorted(
-            os.path.join(_RUNFILES_ROOT, d) for d in os.listdir(_RUNFILES_ROOT)
-        )
+        repo_dirs = sorted(os.path.join(_RUNFILES_ROOT, d) for d in os.listdir(_RUNFILES_ROOT))
         for d in repo_dirs:
             if os.path.isdir(d):
                 _maybe_add_path(d, "import-all")
@@ -178,9 +175,7 @@ def _setup_sys_path():
         if cov_tool:
             _print_verbose_coverage(f"Using toolchain coverage_tool {cov_tool}")
         elif cov_tool := os.environ.get("PYTHON_COVERAGE"):
-            _print_verbose_coverage(
-                f"Using env var coverage: PYTHON_COVERAGE={cov_tool}"
-            )
+            _print_verbose_coverage(f"Using env var coverage: PYTHON_COVERAGE={cov_tool}")
 
         if cov_tool:
             if os.path.isabs(cov_tool):

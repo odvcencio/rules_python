@@ -30,16 +30,13 @@ _REQUEST_INFO_CONFIG_NAME = "bazel_worker_request_info_path"
 
 
 class Worker:
-
-    def __init__(
-        self, instream: "typing.TextIO", outstream: "typing.TextIO", exec_root: str
-    ):
+    def __init__(self, instream: "typing.TextIO", outstream: "typing.TextIO", exec_root: str):
         # NOTE: Sphinx performs its own logging re-configuration, so any
         # logging config we do isn't respected by Sphinx. Controlling where
         # stdout and stderr goes are the main mechanisms. Recall that
         # Bazel send worker stderr to the worker log file.
-        # outputBase=$(bazel info output_base)
-        # find $outputBase/bazel-workers/ -type f -printf '%T@ %p\n' | sort -n | tail -1 | awk '{print $2}'
+        # outputBase=$(bazel info output_base)  # noqa: E501
+        # find $outputBase/bazel-workers/ -type f -printf '%T@ %p\n' | sort -n | tail -1 | awk '{print $2}'  # noqa: E501
         logging.basicConfig(level=logging.WARN)
         logger.info("Initializing worker")
 
@@ -83,8 +80,11 @@ class Worker:
                     if response:
                         self._send_response(response)
                 except SphinxMainError as e:
-                    logger.error("Sphinx main returned failure: exit_code=%s request=%s",
-                                 request, e.exit_code)
+                    logger.error(
+                        "Sphinx main returned failure: exit_code=%s request=%s",
+                        request,
+                        e.exit_code,
+                    )
                     request_id = 0 if not request else request.get("requestId", 0)
                     self._send_response(
                         {
@@ -217,7 +217,6 @@ class Worker:
                 + stderr_output
             )
             raise SphinxMainError(message, exit_code)
-
 
         # Copying is unfortunately necessary because Bazel doesn't know to
         # implicily bring along what the symlinks point to.

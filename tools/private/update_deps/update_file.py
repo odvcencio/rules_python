@@ -17,10 +17,8 @@
 This is reused in other files updating coverage deps and pip deps.
 """
 
-import argparse
 import difflib
 import pathlib
-import sys
 
 
 def _writelines(path: pathlib.Path, out: str):
@@ -51,9 +49,9 @@ def replace_snippet(
         path: pathlib.Path, the path to the file to be modified.
         snippet: str, the snippet of code to insert between the markers.
         start_marker: str, the text that marks the start of the region to be replaced.
-        end_markr: str, the text that marks the end of the region to be replaced.
-        dry_run: bool, if set to True, then the file will not be written and instead we are going to print a diff to
-            stdout.
+        end_marker: str, the text that marks the end of the region to be replaced.
+        dry_run: bool, if set to True, then the file will not be written
+            and instead we are going to print a diff to stdout.
     """
     lines = []
     skip = False
@@ -92,9 +90,9 @@ def update_file(
         path: pathlib.Path, the path to the file to be modified.
         snippet: str, the snippet of code to insert between the markers.
         start_marker: str, the text that marks the start of the region to be replaced.
-        end_markr: str, the text that marks the end of the region to be replaced.
-        dry_run: bool, if set to True, then the file will not be written and instead we are going to print a diff to
-            stdout.
+        end_marker: str, the text that marks the end of the region to be replaced.
+        dry_run: bool, if set to True, then the file will not be written
+            and instead we are going to print a diff to stdout.
     """
     current = path.read_text()
     out = replace_snippet(current, snippet, start_marker, end_marker)
@@ -103,9 +101,7 @@ def update_file(
         _writelines(path, out)
         return
 
-    relative = path.relative_to(
-        pathlib.Path(__file__).resolve().parent.parent.parent.parent
-    )
+    relative = path.relative_to(pathlib.Path(__file__).resolve().parent.parent.parent.parent)
     name = f"{relative}"
     diff = unified_diff(name, current, out)
     if diff:

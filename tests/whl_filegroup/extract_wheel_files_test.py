@@ -26,7 +26,7 @@ class WheelRecordTest(unittest.TestCase):
         self.assertEqual(list(record), list(expected))
 
     def test_get_files(self) -> None:
-        pattern = "(examples/wheel/lib/.*\.txt$|.*main)"
+        pattern = r"(examples/wheel/lib/.*\.txt$|.*main)"
         record = extract_wheel_files.get_record(_WHEEL)
         files = extract_wheel_files.get_files(record, pattern)
         expected = [
@@ -46,9 +46,7 @@ class WheelRecordTest(unittest.TestCase):
             outdir = Path(tmpdir)
             extract_wheel_files.extract_files(_WHEEL, files, outdir)
             extracted_files = {
-                f.relative_to(outdir).as_posix()
-                for f in outdir.glob("**/*")
-                if f.is_file()
+                f.relative_to(outdir).as_posix() for f in outdir.glob("**/*") if f.is_file()
             }
         self.assertEqual(extracted_files, files)
 

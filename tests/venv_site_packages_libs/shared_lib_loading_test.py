@@ -136,9 +136,7 @@ class SharedLibLoadingTest(unittest.TestCase):
             dynsym = elf.get_section_by_name(".dynsym")
             if dynsym:
                 info["undefined_symbols"] = [
-                    s.name
-                    for s in dynsym.iter_symbols()
-                    if s.entry["st_shndx"] == "SHN_UNDEF"
+                    s.name for s in dynsym.iter_symbols() if s.entry["st_shndx"] == "SHN_UNDEF"
                 ]
         return info
 

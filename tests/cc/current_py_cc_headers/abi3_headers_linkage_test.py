@@ -1,5 +1,3 @@
-import os.path
-import pathlib
 import sys
 import unittest
 
@@ -17,9 +15,7 @@ class CheckLinkageTest(unittest.TestCase):
         if not hasattr(pe, "DIRECTORY_ENTRY_IMPORT"):
             self.fail("No import directory found.")
 
-        imported_dlls = [
-            entry.dll.decode("utf-8").lower() for entry in pe.DIRECTORY_ENTRY_IMPORT
-        ]
+        imported_dlls = [entry.dll.decode("utf-8").lower() for entry in pe.DIRECTORY_ENTRY_IMPORT]
         python_dlls = [dll for dll in imported_dlls if dll.startswith("python3")]
         self.assertEqual(python_dlls, ["python3.dll"])
 

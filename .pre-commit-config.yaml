@@ -29,18 +29,14 @@ repos:
           - --warnings=all
       - id: buildifier-lint
         args: *args
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.13
     hooks:
-      - id: isort
-        name: isort (python)
-        args:
-          - --profile
-          - black
-  - repo: https://github.com/psf/black
-    rev: 25.1.0
-    hooks:
-      - id: black
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        exclude: ^(gazelle/python/testdata|tests/pypi/whl_library/testdata)
+      - id: ruff-format
+        exclude: ^(gazelle/python/testdata|tests/pypi/whl_library/testdata)
   - repo: local
     hooks:
       - id: update-deleted-packages

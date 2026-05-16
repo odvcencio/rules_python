@@ -9,9 +9,7 @@ def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--wheel", type=Path, required=True, help="The path to a wheel."
-    )
+    parser.add_argument("--wheel", type=Path, required=True, help="The path to a wheel.")
     parser.add_argument(
         "--name_file",
         type=Path,

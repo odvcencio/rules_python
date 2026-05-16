@@ -13,9 +13,7 @@ class PythonToolchainTest(unittest.TestCase):
         expect_version = os.environ["EXPECT_PYTHON_VERSION"]
 
         rf = runfiles.Create()
-        settings_path = rf.Rlocation(
-            "rules_python/tests/support/current_build_settings.json"
-        )
+        settings_path = rf.Rlocation("rules_python/tests/support/current_build_settings.json")
         settings = json.loads(pathlib.Path(settings_path).read_text())
 
         expected = "python_{}".format(expect_version.replace(".", "_"))

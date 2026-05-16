@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import io
-import re
 
 from absl.testing import absltest
 from google.protobuf import text_format
-from sphinxdocs.private import proto_to_markdown
 from stardoc.proto import stardoc_output_pb2
+
+from sphinxdocs.private import proto_to_markdown
 
 _EVERYTHING_MODULE = """\
 module_docstring: "MODULE_DOC_STRING"

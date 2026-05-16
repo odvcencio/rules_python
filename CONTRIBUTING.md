@@ -374,7 +374,7 @@ If you did `pre-commit install`, various tools are run when you do `git commit`.
 This might show as an error such as:
 
 ```
-[INFO] Installing environment for https://github.com/psf/black.
+[INFO] Installing environment for https://github.com/astral-sh/ruff-pre-commit.
 [INFO] Once installed this environment will be reused.
 [INFO] This may take a few minutes...
 An unexpected error has occurred: CalledProcessError: command: ...
@@ -382,6 +382,6 @@ An unexpected error has occurred: CalledProcessError: command: ...
 
 To fix, you'll need to figure out what command is failing and why. Because these
 are tools that run locally, its likely you'll need to fix something with your
-environment or the installation of the tools. For Python tools (e.g. black or
-isort), you can try using a different Python version in your shell by using
-tools such as [pyenv](https://github.com/pyenv/pyenv).
+environment or the installation of the tools. For Python tools (e.g. ruff), you
+can try using a different Python version in your shell by using tools such as
+[pyenv](https://github.com/pyenv/pyenv).

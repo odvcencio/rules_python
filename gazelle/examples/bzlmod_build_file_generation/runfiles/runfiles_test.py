@@ -39,9 +39,7 @@ class RunfilesTest(unittest.TestCase):
             self.assertEqual(f.read().strip(), "Hello, example_bzlmod!")
 
     def testRunfileInOtherModuleWithOurRepoMapping(self):
-        data_path = runfiles.Create().Rlocation(
-            "our_other_module/other_module/pkg/data/data.txt"
-        )
+        data_path = runfiles.Create().Rlocation("our_other_module/other_module/pkg/data/data.txt")
         with open(data_path, "rt", encoding="utf-8", newline="\n") as f:
             self.assertEqual(f.read().strip(), "Hello, other_module!")
 

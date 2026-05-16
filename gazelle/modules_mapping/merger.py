@@ -24,9 +24,7 @@ def merge_modules_mappings(input_files: list[Path], output_file: Path) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Merge multiple modules_mapping.json files"
-    )
+    parser = argparse.ArgumentParser(description="Merge multiple modules_mapping.json files")
     parser.add_argument(
         "--output",
         required=True,

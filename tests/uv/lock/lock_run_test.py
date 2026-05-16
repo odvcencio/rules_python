@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -28,9 +27,7 @@ class LockTests(unittest.TestCase):
             workspace_dir = Path(dir)
             want_path = workspace_dir / "tests" / "uv" / "lock" / "does_not_exist.txt"
 
-            self.assertFalse(
-                want_path.exists(), "The path should not exist after the test"
-            )
+            self.assertFalse(want_path.exists(), "The path should not exist after the test")
             output = subprocess.run(
                 copier_path,
                 capture_output=True,
@@ -57,14 +54,7 @@ class LockTests(unittest.TestCase):
         # When
         with tempfile.TemporaryDirectory() as dir:
             workspace_dir = Path(dir)
-            want_path = (
-                workspace_dir
-                / "tests"
-                / "uv"
-                / "lock"
-                / "testdata"
-                / "requirements.txt"
-            )
+            want_path = workspace_dir / "tests" / "uv" / "lock" / "testdata" / "requirements.txt"
             want_path.parent.mkdir(parents=True)
             want_path.write_text(
                 want_text + "\n\n"
@@ -98,9 +88,7 @@ class LockTests(unittest.TestCase):
             # there already
             want_path.parent.mkdir(parents=True)
 
-            self.assertFalse(
-                want_path.exists(), "The path should not exist after the test"
-            )
+            self.assertFalse(want_path.exists(), "The path should not exist after the test")
             output = subprocess.run(
                 copier_path,
                 capture_output=True,
@@ -128,14 +116,7 @@ class LockTests(unittest.TestCase):
         # When
         with tempfile.TemporaryDirectory() as dir:
             workspace_dir = Path(dir)
-            want_path = (
-                workspace_dir
-                / "tests"
-                / "uv"
-                / "lock"
-                / "testdata"
-                / "requirements.txt"
-            )
+            want_path = workspace_dir / "tests" / "uv" / "lock" / "testdata" / "requirements.txt"
 
             want_path.parent.mkdir(parents=True)
             want_path.write_text(

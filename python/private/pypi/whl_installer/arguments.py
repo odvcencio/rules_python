@@ -14,7 +14,6 @@
 
 import argparse
 import json
-import pathlib
 from typing import Any, Dict, Set
 
 
@@ -52,8 +51,8 @@ def parser(**kwargs: Any) -> argparse.ArgumentParser:
     parser.add_argument(
         "--download_only",
         action="store_true",
-        help="Use 'pip download' instead of 'pip wheel'. Disables building wheels from source, but allows use of "
-        "--platform, --python-version, --implementation, and --abi in --extra_pip_args.",
+        help="Use 'pip download' instead of 'pip wheel'. Disables building wheels from source, but allows use of "  # noqa: E501
+        "--platform, --python-version, --implementation, and --abi in --extra_pip_args.",  # noqa: E501
     )
     return parser
 

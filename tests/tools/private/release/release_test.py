@@ -1,4 +1,3 @@
-import datetime
 import os
 import pathlib
 import shutil
@@ -88,12 +87,10 @@ class ReleaserTest(unittest.TestCase):
         # Assert
         new_content = changelog_path.read_text()
 
+        self.assertIn(_UNRELEASED_TEMPLATE, new_content, msg=f"ACTUAL:\n\n{new_content}\n\n")
+        self.assertIn("## [1.23.4] - 2025-01-01", new_content)
         self.assertIn(
-            _UNRELEASED_TEMPLATE, new_content, msg=f"ACTUAL:\n\n{new_content}\n\n"
-        )
-        self.assertIn(f"## [1.23.4] - 2025-01-01", new_content)
-        self.assertIn(
-            f"[1.23.4]: https://github.com/bazel-contrib/rules_python/releases/tag/1.23.4",
+            "[1.23.4]: https://github.com/bazel-contrib/rules_python/releases/tag/1.23.4",
             new_content,
         )
         self.assertIn("{#v1-23-4}", new_content)
@@ -234,9 +231,7 @@ class DetermineNextVersionTest(unittest.TestCase):
         self.assertEqual(next_version, "1.2.4")
 
     def test_only_patch(self):
-        (self.tmpdir / "mock_file.bzl").write_text(
-            ":::{versionchanged} VERSION_NEXT_PATCH"
-        )
+        (self.tmpdir / "mock_file.bzl").write_text(":::{versionchanged} VERSION_NEXT_PATCH")
         self.mock_get_latest_version.return_value = "1.2.3"
 
         next_version = releaser.determine_next_version()
@@ -244,9 +239,7 @@ class DetermineNextVersionTest(unittest.TestCase):
         self.assertEqual(next_version, "1.2.4")
 
     def test_only_feature(self):
-        (self.tmpdir / "mock_file.bzl").write_text(
-            ":::{versionadded} VERSION_NEXT_FEATURE"
-        )
+        (self.tmpdir / "mock_file.bzl").write_text(":::{versionadded} VERSION_NEXT_FEATURE")
         self.mock_get_latest_version.return_value = "1.2.3"
 
         next_version = releaser.determine_next_version()
@@ -254,12 +247,8 @@ class DetermineNextVersionTest(unittest.TestCase):
         self.assertEqual(next_version, "1.3.0")
 
     def test_both_markers(self):
-        (self.tmpdir / "mock_file_patch.bzl").write_text(
-            ":::{versionchanged} VERSION_NEXT_PATCH"
-        )
-        (self.tmpdir / "mock_file_feature.bzl").write_text(
-            ":::{versionadded} VERSION_NEXT_FEATURE"
-        )
+        (self.tmpdir / "mock_file_patch.bzl").write_text(":::{versionchanged} VERSION_NEXT_PATCH")
+        (self.tmpdir / "mock_file_feature.bzl").write_text(":::{versionadded} VERSION_NEXT_FEATURE")
         self.mock_get_latest_version.return_value = "1.2.3"
 
         next_version = releaser.determine_next_version()

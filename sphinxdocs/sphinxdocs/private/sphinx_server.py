@@ -19,12 +19,12 @@ def main(argv):
         def __init__(self, *args, **kwargs):
             super().__init__(directory=serve_directory, *args, **kwargs)
 
-    address = ("0.0.0.0", 8000)
-    # with server.ThreadingHTTPServer(address, DirectoryHandler) as (ip, port, httpd):
+    # with server.ThreadingHTTPServer(("0.0.0.0", 8000), DirectoryHandler) as (ip, port, httpd):
+    _address = ("0.0.0.0", 8000)
     with _start_server(DirectoryHandler, "0.0.0.0", 8000) as (ip, port, httpd):
 
         def _print_server_info():
-            print(f"Serving...")
+            print("Serving...")
             print(f"  Address: http://{ip}:{port}")
             print(f"  Serving directory: {serve_directory}")
             print(f"      url: file://{serve_directory}")
@@ -41,9 +41,7 @@ def main(argv):
                 httpd.serve_forever()
             except KeyboardInterrupt:
                 _print_server_info()
-                print(
-                    "*** KeyboardInterrupt received: CTRL+C again to terminate server ***"
-                )
+                print("*** KeyboardInterrupt received: CTRL+C again to terminate server ***")
                 try:
                     time.sleep(1)
                     print("Restarting serving ...")

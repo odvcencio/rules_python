@@ -81,7 +81,7 @@ class RunTest(unittest.TestCase):
                 )
 
         self.assertEqual(
-            "Tried to guess that you wanted 'bar-baz', but could not find it. Please select one of the following console scripts: foo",
+            "Tried to guess that you wanted 'bar-baz', but could not find it. Please select one of the following console scripts: foo",  # noqa: E501
             cm.exception.args[0],
         )
 
@@ -194,8 +194,8 @@ class RunTest(unittest.TestCase):
 
             got = out.read_text()
 
-        self.assertRegex(got, "from foo\.baz import Bar")
-        self.assertRegex(got, "sys\.exit\(Bar\.baz\(\)\)")
+        self.assertRegex(got, r"from foo\.baz import Bar")
+        self.assertRegex(got, r"sys\.exit\(Bar\.baz\(\)\)")
 
     def test_shebang_included(self):
         with tempfile.TemporaryDirectory() as tmpdir:

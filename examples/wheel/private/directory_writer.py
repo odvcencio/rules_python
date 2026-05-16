@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""The action executable of the `@rules_python//examples/wheel/private:wheel_utils.bzl%directory_writer` rule."""
+"""The action executable of the wheel_utils.bzl directory_writer rule."""
 
 import argparse
 import json

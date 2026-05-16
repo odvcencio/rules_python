@@ -39,8 +39,7 @@ class Generator:
         # Skip stubs and types wheels.
         wheel_name = get_wheel_name(whl)
         if self.include_stub_packages and (
-            wheel_name.endswith(("_stubs", "_types"))
-            or wheel_name.startswith(("types_", "stubs_"))
+            wheel_name.endswith(("_stubs", "_types")) or wheel_name.startswith(("types_", "stubs_"))
         ):
             self.mapping[wheel_name.lower()] = wheel_name.lower()
             return
@@ -129,9 +128,7 @@ def get_wheel_name(path):
     pp = pathlib.PurePath(path)
     if pp.suffix != ".whl":
         raise RuntimeError(
-            "{} is not a valid wheel file name: the wheel doesn't follow ".format(
-                pp.name
-            )
+            "{} is not a valid wheel file name: the wheel doesn't follow ".format(pp.name)
             + "https://www.python.org/dev/peps/pep-0427/#file-name-convention"
         )
     return pp.name[: pp.name.find("-")]

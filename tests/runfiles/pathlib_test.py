@@ -146,8 +146,7 @@ class PathlibTest(unittest.TestCase):
         p = root / "my_repo"
 
         glob_results = {
-            pathlib.PurePath(c).relative_to(pathlib.PurePath(p)).as_posix()
-            for c in p.glob("*.txt")
+            pathlib.PurePath(c).relative_to(pathlib.PurePath(p)).as_posix() for c in p.glob("*.txt")
         }
         self.assertEqual(glob_results, {"data.txt"})
 

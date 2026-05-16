@@ -15,21 +15,25 @@
 """
 console_script generator from entry_points.txt contents.
 
-For Python versions earlier than 3.11 and for earlier bazel versions than 7.0 we need to workaround the issue of
-sys.path[0] breaking out of the runfiles tree see the following for more context:
+For Python versions earlier than 3.11 and for earlier bazel versions than 7.0
+we need to workaround the issue of sys.path[0] breaking out of the runfiles tree
+see the following for more context:
 * https://github.com/bazel-contrib/rules_python/issues/382
 * https://github.com/bazelbuild/bazel/pull/15701
 
-In affected bazel and Python versions we see in programs such as `flake8`, `pylint` or `pytest` errors because the
-first `sys.path` element is outside the `runfiles` directory and if the `name` of the `py_binary` is the same as
-the program name, then the script (e.g. `flake8`) will start failing whilst trying to import its own internals from
-the bazel entrypoint script.
+In affected bazel and Python versions we see in programs such as `flake8`,
+`pylint` or `pytest` errors because the first `sys.path` element is outside the
+`runfiles` directory and if the `name` of the `py_binary` is the same as the
+program name, then the script (e.g. `flake8`) will start failing whilst trying
+to import its own internals from the bazel entrypoint script.
 
-The mitigation strategy is to remove the first entry in the `sys.path` if it does not have `.runfiles` and it seems
-to fix the behaviour of console_scripts under `bazel run`.
+The mitigation strategy is to remove the first entry in the `sys.path` if it
+does not have `.runfiles` and it seems to fix the behaviour of console_scripts
+under `bazel run`.
 
-This would not happen if we created a console_script binary in the root of an external repository, e.g.
-`@pypi_pylint//` because the path for the external repository is already in the runfiles directory.
+This would not happen if we created a console_script binary in the root of an
+external repository, e.g. `@pypi_pylint//` because the path for the external
+repository is already in the runfiles directory.
 """
 
 from __future__ import annotations
@@ -37,9 +41,6 @@ from __future__ import annotations
 import argparse
 import configparser
 import pathlib
-import re
-import sys
-import textwrap
 
 _ENTRY_POINTS_TXT = "entry_points.txt"
 
@@ -75,7 +76,7 @@ class EntryPointsParser(configparser.ConfigParser):
     optionxform = staticmethod(str)
 
 
-def _guess_entry_point(guess: str, console_scripts: dict[string, string]) -> str | None:
+def _guess_entry_point(guess: str, console_scripts: dict[str, str]) -> str | None:
     for key, candidate in console_scripts.items():
         if guess == key:
             return candidate
@@ -95,8 +96,10 @@ def run(
         entry_points: The entry_points.txt file to be parsed.
         out: The output file.
         console_script: The console_script entry in the entry_points.txt file.
-        console_script_guess: The string used for guessing the console_script if it is not provided.
-        shebang: The shebang to use for the entry point python file. Defaults to empty string (no shebang).
+        console_script_guess: The string used for guessing the console_script
+            if not provided.
+        shebang: The shebang for the entry point python file. Defaults to empty
+            string (no shebang).
     """
     config = EntryPointsParser()
     config.read(entry_points)
@@ -105,7 +108,7 @@ def run(
         console_scripts = dict(config["console_scripts"])
     except KeyError:
         raise RuntimeError(
-            f"The package does not provide any console_scripts in its {_ENTRY_POINTS_TXT}"
+            f"The package does not provide any console_scripts in its {_ENTRY_POINTS_TXT}"  # noqa: E501
         )
 
     if console_script:
@@ -114,7 +117,7 @@ def run(
         except KeyError:
             available = ", ".join(sorted(console_scripts.keys()))
             raise RuntimeError(
-                f"The console_script '{console_script}' was not found, only the following are available: {available}"
+                f"The console_script '{console_script}' was not found, only the following are available: {available}"  # noqa: E501
             ) from None
     else:
         # Get rid of the extension and the common prefix

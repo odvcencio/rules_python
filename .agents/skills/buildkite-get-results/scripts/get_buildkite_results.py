@@ -17,9 +17,7 @@ def get_pr_checks(pr_number):
             stderr=subprocess.DEVNULL,
         )
     except FileNotFoundError:
-        print(
-            "Error: 'gh' (GitHub CLI) is not installed or not in PATH.", file=sys.stderr
-        )
+        print("Error: 'gh' (GitHub CLI) is not installed or not in PATH.", file=sys.stderr)
         sys.exit(1)
     except subprocess.CalledProcessError:
         print("Error: 'gh' command failed. Is it installed?", file=sys.stderr)
@@ -165,15 +163,18 @@ def main():
 
     build_state = data.get("state", "Unknown")
     print(f"Build State: {build_state}")
-    
+
     jobs = data.get("jobs", [])
     jobs_count = data.get("statistics", {}).get("jobs_count", 0)
-    
+
     print(f"Total jobs reported: {jobs_count}")
     print(f"Jobs found in data: {len(jobs)}")
-    
+
     if jobs_count != len(jobs):
-        print(f"WARNING: Reported job count ({jobs_count}) does not match jobs found ({len(jobs)}).", file=sys.stderr)
+        print(
+            f"WARNING: Reported job count ({jobs_count}) does not match jobs found ({len(jobs)}).",
+            file=sys.stderr,
+        )
 
     print("-" * 40)
 

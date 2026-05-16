@@ -63,9 +63,7 @@ def _unidiff_output(expected, actual, record):
     expected = expected.splitlines(1)
     actual = actual.splitlines(1)
 
-    diff = difflib.unified_diff(
-        expected, actual, fromfile=f"a/{record}", tofile=f"b/{record}"
-    )
+    diff = difflib.unified_diff(expected, actual, fromfile=f"a/{record}", tofile=f"b/{record}")
 
     return "".join(diff)
 
@@ -174,7 +172,7 @@ def main(sys_argv):
                 rel_path = p.relative_to(patched_wheel_dir)
                 out.add_file(str(rel_path), p)
 
-            logging.debug(f"Writing RECORD file")
+            logging.debug("Writing RECORD file")
             got_record = out.add_recordfile()
 
     if got_record == record_contents:
@@ -187,14 +185,10 @@ def main(sys_argv):
         out.distinfo_path("RECORD"),
     )
     args.record_patch.write_text(record_diff)
-    logging.warning(
-        f"Please apply patch to the RECORD file ({args.record_patch}):\n{record_diff}"
-    )
+    logging.warning(f"Please apply patch to the RECORD file ({args.record_patch}):\n{record_diff}")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format="%(module)s: %(levelname)s: %(message)s", level=logging.DEBUG
-    )
+    logging.basicConfig(format="%(module)s: %(levelname)s: %(message)s", level=logging.DEBUG)
 
     sys.exit(main(sys.argv[1:]))

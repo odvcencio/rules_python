@@ -18,9 +18,7 @@ class PyZipAppTest(unittest.TestCase):
         except subprocess.CalledProcessError as e:
             self.fail(
                 (
-                    "exec failed: {}\n"
-                    + "exit code: {}\n"
-                    + "=== stdout/stderr start ===\n"
+                    "exec failed: {}\n" + "exit code: {}\n" + "=== stdout/stderr start ===\n"
                     "{}\n" + "=== stdout/stderr end ==="
                 ).format(zipapp_path, e.returncode, e.output.decode("utf-8"))
             )
@@ -100,9 +98,7 @@ class PyZipAppTest(unittest.TestCase):
                 self.assertZipEntryIsSymlink(zf, python_bin)
 
             # Verify _bazel_site_init.py exists in site-packages
-            self.assertHasPathMatchingSuffix(
-                namelist, "/site-packages/_bazel_site_init.py"
-            )
+            self.assertHasPathMatchingSuffix(namelist, "/site-packages/_bazel_site_init.py")
 
 
 if __name__ == "__main__":

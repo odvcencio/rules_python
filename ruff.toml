@@ -1,0 +1,30 @@
+line-length = 100
+target-version = "py313"
+exclude = [
+  "gazelle/python/testdata",
+  "tests/pypi/whl_library/testdata",
+]
+
+[lint]
+select = ["I", "F", "E", "W"]
+
+[lint.isort]
+known-first-party = [
+  "rules_python",
+  "sphinxdocs",
+  "gazelle",
+  "tests",
+  "examples",
+]
+
+[lint.per-file-ignores]
+"gazelle/python/testdata/**" = ["E", "F", "W"]
+"tests/pypi/whl_library/testdata/**" = ["E", "F", "W"]
+"python/private/stage2_bootstrap_template.py" = ["E501", "F821"]
+"python/private/zipapp/zip_main_template.py" = ["E402", "E501"]
+"python/private/site_init_template.py" = ["F841"]
+"python/private/pypi/namespace_pkg_tmpl.py" = ["F821"]
+"python/bin/repl_stub.py" = ["E402"]
+"tests/bootstrap_impls/system_python_nodeps_test.py" = ["E402", "F401"]
+"tests/modules/other/venv_bin.py" = ["E402"]
+"python/runfiles/__init__.py" = ["F403"]

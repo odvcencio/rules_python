@@ -184,9 +184,9 @@ def find_runfiles_root(main_rel_path):
     runfiles_dir = os.environ.get("RUNFILES_DIR", None)
     if not runfiles_dir:
         runfiles_manifest_file = os.environ.get("RUNFILES_MANIFEST_FILE", "")
-        if runfiles_manifest_file.endswith(
-            ".runfiles_manifest"
-        ) or runfiles_manifest_file.endswith(".runfiles/MANIFEST"):
+        if runfiles_manifest_file.endswith(".runfiles_manifest") or runfiles_manifest_file.endswith(
+            ".runfiles/MANIFEST"
+        ):
             runfiles_dir = runfiles_manifest_file[:-9]
     # Be defensive: the runfiles dir should contain our main entry point. If
     # it doesn't, then it must not be our runfiles directory.
@@ -356,8 +356,6 @@ def _maybe_collect_coverage(enable):
     print_verbose_coverage("Instrumented Files:\n" + "\n".join(instrumented_files))
     print_verbose_coverage("Sources:\n" + "\n".join(unique_dirs))
 
-    import uuid
-
     import coverage
 
     coverage_dir = os.environ["COVERAGE_DIR"]
@@ -367,9 +365,7 @@ def _maybe_collect_coverage(enable):
     # using an rc file.
     rcfile_name = os.path.join(coverage_dir, ".coveragerc_{}".format(unique_id))
     disable_warnings = (
-        "disable_warnings = module-not-imported, no-data-collected"
-        if COVERAGE_INSTRUMENTED
-        else ""
+        "disable_warnings = module-not-imported, no-data-collected" if COVERAGE_INSTRUMENTED else ""
     )
     print_verbose_coverage("coveragerc file:", rcfile_name)
     with open(rcfile_name, "w") as rcfile:
@@ -501,9 +497,7 @@ def main():
         #    prevent interference from the system.
         # 3. If running without a venv configured. This occurs with the
         #    system_python bootstrap.
-        print_verbose(
-            f"sys.path missing expected site-packages: adding {site_packages}"
-        )
+        print_verbose(f"sys.path missing expected site-packages: adding {site_packages}")
         _add_site_packages(site_packages)
 
     print_verbose("runfiles root:", runfiles_root)
@@ -532,17 +526,13 @@ def main():
         # To replicate this behavior, we add main's directory within the runfiles
         # when safe path isn't enabled.
         if not getattr(sys.flags, "safe_path", False):
-            prepend_path_entries = [
-                os.path.join(runfiles_root, os.path.dirname(main_rel_path))
-            ]
+            prepend_path_entries = [os.path.join(runfiles_root, os.path.dirname(main_rel_path))]
         else:
             prepend_path_entries = []
 
         main_filename = os.path.join(runfiles_root, main_rel_path)
         main_filename = get_windows_path_with_unc_prefix(main_filename)
-        assert os.path.exists(main_filename), (
-            "Cannot exec() %r: file not found." % main_filename
-        )
+        assert os.path.exists(main_filename), "Cannot exec() %r: file not found." % main_filename
         assert os.access(main_filename, os.R_OK), (
             "Cannot exec() %r: file not readable." % main_filename
         )

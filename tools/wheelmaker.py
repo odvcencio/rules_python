@@ -24,8 +24,8 @@ import re
 import stat
 import sys
 import zipfile
-from collections.abc import Iterable
 from pathlib import Path
+from typing import List, Sequence
 
 _ZIP_EPOCH = (1980, 1, 1, 0, 0, 0)
 
@@ -94,9 +94,7 @@ def normalize_pep440(version):
     substituted = re.sub(r"\{\w+\}", "0", version)
     delimiter = "." if "+" in substituted else "+"
     try:
-        return str(
-            packaging.version.Version(f"{substituted}{delimiter}{sanitized}")
-        )
+        return str(packaging.version.Version(f"{substituted}{delimiter}{sanitized}"))
     except packaging.version.InvalidVersion:
         return str(packaging.version.Version(f"0+{sanitized}"))
 
@@ -120,9 +118,7 @@ def arcname_from(
     # Always use unix path separators.
     normalized_arcname = name.replace(os.path.sep, "/")
     # Don't manipulate names filenames in the .distinfo or .data directories.
-    if distribution_prefix and normalized_arcname.startswith(
-        distribution_prefix
-    ):
+    if distribution_prefix and normalized_arcname.startswith(distribution_prefix):
         return normalized_arcname
     for prefix in strip_path_prefixes:
         if normalized_arcname.startswith(prefix):
@@ -205,9 +201,7 @@ class _WhlFile(zipfile.ZipFile):
         self.writestr(zinfo, contents)
         hash = hashlib.sha256()
         hash.update(contents)
-        self._add_to_record(
-            filename, self._serialize_digest(hash), len(contents)
-        )
+        self._add_to_record(filename, self._serialize_digest(hash), len(contents))
 
     def _serialize_digest(self, hash) -> str:
         # https://www.python.org/dev/peps/pep-0376/#record
@@ -244,9 +238,7 @@ class _WhlFile(zipfile.ZipFile):
         filename = filename.lstrip("/")
         # Some RECORDs like torch have *all* filenames quoted and we must minimize diff.
         # Otherwise, we quote only when necessary (e.g. for filenames with commas).
-        quoting = (
-            csv.QUOTE_ALL if self.quote_all_filenames else csv.QUOTE_MINIMAL
-        )
+        quoting = csv.QUOTE_ALL if self.quote_all_filenames else csv.QUOTE_MINIMAL
         with io.StringIO() as buf:
             csv.writer(buf, quoting=quoting).writerow([filename])
             return buf.getvalue().strip()
@@ -255,10 +247,7 @@ class _WhlFile(zipfile.ZipFile):
         """Write RECORD file to the distribution."""
         record_path = self.distinfo_path("RECORD")
         entries = self._record + [(record_path, "", "")]
-        entries = [
-            (self._quote_filename(fname), digest, size)
-            for fname, digest, size in entries
-        ]
+        entries = [(self._quote_filename(fname), digest, size) for fname, digest, size in entries]
         contents = "\n".join(",".join(entry) for entry in entries) + "\n"
         self.add_string(record_path, contents)
         return contents
@@ -288,13 +277,9 @@ class WheelMaker(object):
         self._strip_path_prefixes = strip_path_prefixes
         self._add_path_prefix = add_path_prefix
         self._compress = compress
-        self._wheelname_fragment_distribution_name = (
-            escape_filename_distribution_name(self._name)
-        )
+        self._wheelname_fragment_distribution_name = escape_filename_distribution_name(self._name)
 
-        self._distribution_prefix = (
-            self._wheelname_fragment_distribution_name + "-" + self._version
-        )
+        self._distribution_prefix = self._wheelname_fragment_distribution_name + "-" + self._version
 
         self._whlfile = None
 
@@ -305,9 +290,7 @@ class WheelMaker(object):
             distribution_prefix=self._distribution_prefix,
             strip_path_prefixes=self._strip_path_prefixes,
             add_path_prefix=self._add_path_prefix,
-            compression=(
-                zipfile.ZIP_DEFLATED if self._compress else zipfile.ZIP_STORED
-            ),
+            compression=(zipfile.ZIP_DEFLATED if self._compress else zipfile.ZIP_STORED),
         )
         return self
 
@@ -350,9 +333,7 @@ class WheelMaker(object):
 Wheel-Version: 1.0
 Generator: bazel-wheelmaker 1.0
 Root-Is-Purelib: {}
-""".format(
-            "true" if self._platform == "any" else "false"
-        )
+""".format("true" if self._platform == "any" else "false")
         for tag in self.disttags():
             wheel_contents += "Tag: %s\n" % tag
         self._whlfile.add_string(self.distinfo_path("WHEEL"), wheel_contents)
@@ -361,9 +342,7 @@ Root-Is-Purelib: {}
         """Write METADATA file to the distribution."""
         # https://www.python.org/dev/peps/pep-0566/
         # https://packaging.python.org/specifications/core-metadata/
-        metadata = re.sub(
-            "^Name: .*$", "Name: %s" % name, metadata, flags=re.MULTILINE
-        )
+        metadata = re.sub("^Name: .*$", "Name: %s" % name, metadata, flags=re.MULTILINE)
         metadata += "Version: %s\n\n" % self._version
         # setuptools seems to insert UNKNOWN as description when none is
         # provided.
@@ -442,12 +421,8 @@ def resolve_argument_stamp(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Builds a python wheel")
-    metadata_group = parser.add_argument_group(
-        "Wheel name, version and platform"
-    )
-    metadata_group.add_argument(
-        "--name", required=True, type=str, help="Name of the distribution"
-    )
+    metadata_group = parser.add_argument_group("Wheel name, version and platform")
+    metadata_group.add_argument("--name", required=True, type=str, help="Name of the distribution")
     metadata_group.add_argument(
         "--version", required=True, type=str, help="Version of the distribution"
     )
@@ -464,14 +439,10 @@ def parse_args() -> argparse.Namespace:
         help="Python version, e.g. 'py2' or 'py3'",
     )
     metadata_group.add_argument("--abi", type=str, default="none")
-    metadata_group.add_argument(
-        "--platform", type=str, default="any", help="Target platform. "
-    )
+    metadata_group.add_argument("--platform", type=str, default="any", help="Target platform. ")
 
     output_group = parser.add_argument_group("Output file location")
-    output_group.add_argument(
-        "--out", type=str, default=None, help="Override name of ouptut file"
-    )
+    output_group.add_argument("--out", type=str, default=None, help="Override name of ouptut file")
     output_group.add_argument(
         "--no_compress",
         action="store_true",
@@ -503,12 +474,9 @@ def parse_args() -> argparse.Namespace:
     wheel_group.add_argument(
         "--metadata_file",
         type=Path,
-        help="Contents of the METADATA file (before appending contents of "
-        "--description_file)",
+        help="Contents of the METADATA file (before appending contents of --description_file)",
     )
-    wheel_group.add_argument(
-        "--description_file", help="Path to the file with package description"
-    )
+    wheel_group.add_argument("--description_file", help="Path to the file with package description")
     wheel_group.add_argument(
         "--description_content_type",
         help="Content type of the package description",
@@ -529,8 +497,7 @@ def parse_args() -> argparse.Namespace:
     contents_group.add_argument(
         "--input_file_list",
         action="append",
-        help="A file that has all the input files defined as a list to avoid "
-        "the long command",
+        help="A file that has all the input files defined as a list to avoid the long command",
     )
     contents_group.add_argument(
         "--extra_distinfo_file",
@@ -622,9 +589,7 @@ def main() -> None:
 
         description = None
         if arguments.description_file:
-            with open(
-                arguments.description_file, "rt", encoding="utf-8"
-            ) as description_file:
+            with open(arguments.description_file, "rt", encoding="utf-8") as description_file:
                 description = description_file.read()
 
         metadata = arguments.metadata_file.read_text(encoding="utf-8")
@@ -632,7 +597,6 @@ def main() -> None:
         # This is not imported at the top of the file due to the reliance
         # on this file in the `whl_library` repository rule which does not
         # provide `packaging` but does import symbols defined here.
-        from packaging.requirements import Requirement
 
         # Search for any `Requires-Dist` entries that refer to other files and
         # expand them.
@@ -643,16 +607,12 @@ def main() -> None:
 
             if not meta_line[len("Requires-Dist: ") :].startswith("@"):
                 # This is a normal requirement.
-                package, _, extra = meta_line[
-                    len("Requires-Dist: ") :
-                ].rpartition(";")
+                package, _, extra = meta_line[len("Requires-Dist: ") :].rpartition(";")
                 if not package:
                     # This is when the package requirement does not have markers.
                     continue
                 extra = extra.strip()
-                metadata = metadata.replace(
-                    meta_line, get_new_requirement_line(package, extra)
-                )
+                metadata = metadata.replace(meta_line, get_new_requirement_line(package, extra))
                 continue
 
             # This is a requirement that refers to a file.
@@ -660,9 +620,7 @@ def main() -> None:
             extra = extra.strip()
 
             reqs = []
-            for reqs_line in (
-                Path(file).read_text(encoding="utf-8").splitlines()
-            ):
+            for reqs_line in Path(file).read_text(encoding="utf-8").splitlines():
                 reqs_text = reqs_line.strip()
                 if not reqs_text or reqs_text.startswith(("#", "-")):
                     continue
@@ -677,9 +635,7 @@ def main() -> None:
             # File is empty
             # So replace the meta_line entirely, including removing newline chars
             else:
-                metadata = re.sub(
-                    re.escape(meta_line) + r"(?:\r?\n)?", "", metadata, count=1
-                )
+                metadata = re.sub(re.escape(meta_line) + r"(?:\r?\n)?", "", metadata, count=1)
 
         maker.add_metadata(
             metadata=metadata,

@@ -31,9 +31,7 @@ def make_request(url, method="GET", data=None, token=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Retry failed jobs in a Buildkite build."
-    )
+    parser = argparse.ArgumentParser(description="Retry failed jobs in a Buildkite build.")
     parser.add_argument("org", help="Organization slug")
     parser.add_argument("pipeline", help="Pipeline slug")
     parser.add_argument("build", help="Build number")
@@ -46,9 +44,7 @@ def main():
     token = os.environ.get("BUILDKITE_API_TOKEN")
 
     if not token:
-        print(
-            "Please set the BUILDKITE_API_TOKEN environment variable.", file=sys.stderr
-        )
+        print("Please set the BUILDKITE_API_TOKEN environment variable.", file=sys.stderr)
         sys.exit(1)
 
     url = f"https://api.buildkite.com/v2/organizations/{args.org}/pipelines/{args.pipeline}/builds/{args.build}"

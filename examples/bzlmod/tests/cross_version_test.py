@@ -27,7 +27,11 @@ subprocess_expected = os.getenv("SUBPROCESS_VERSION_CHECK")
 
 if subprocess_current != subprocess_expected:
     print(
-        f"expected subprocess version '{subprocess_expected}' is different than returned '{subprocess_current}'"
+        (
+            "expected subprocess version"
+            f" '{subprocess_expected}'"
+            f" is different than returned '{subprocess_current}'"
+        )
     )
     sys.exit(1)
 

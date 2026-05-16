@@ -170,9 +170,7 @@ def main(
     os.environ["CUSTOM_COMPILE_COMMAND"] = update_command
     os.environ["PIP_CONFIG_FILE"] = os.getenv("PIP_CONFIG_FILE") or os.devnull
 
-    argv.append(
-        f"--output-file={requirements_file_relative if UPDATE else requirements_out}"
-    )
+    argv.append(f"--output-file={requirements_file_relative if UPDATE else requirements_out}")
     argv.extend(
         (src_relative if Path(src_relative).exists() else resolved_src)
         for src_relative, resolved_src in zip(srcs_relative, resolved_srcs)
@@ -188,7 +186,7 @@ def main(
     if UPDATE:
         print("Updating " + requirements_file_relative)
 
-        # Make sure the output file for pip_compile exists. It won't if we are on Windows and --enable_runfiles is not set.
+        # Make sure the output file for pip_compile exists. It won't if we are on Windows and --enable_runfiles is not set.  # noqa: E501
         if not os.path.exists(requirements_file_relative):
             os.makedirs(os.path.dirname(requirements_file_relative), exist_ok=True)
             shutil.copy(resolved_requirements_file, requirements_file_relative)
@@ -197,13 +195,11 @@ def main(
             workspace = os.environ["BUILD_WORKSPACE_DIRECTORY"]
             requirements_file_tree = os.path.join(workspace, requirements_file_relative)
             absolute_output_file = Path(requirements_file_relative).absolute()
-            # In most cases, requirements_file will be a symlink to the real file in the source tree.
-            # If symlinks are not enabled (e.g. on Windows), then requirements_file will be a copy,
+            # In most cases, requirements_file will be a symlink to the real file in the source tree.  # noqa: E501
+            # If symlinks are not enabled (e.g. on Windows), then requirements_file will be a copy,  # noqa: E501
             # and we should copy the updated requirements back to the source tree.
             if not absolute_output_file.samefile(requirements_file_tree):
-                atexit.register(
-                    lambda: shutil.copy(absolute_output_file, requirements_file_tree)
-                )
+                atexit.register(lambda: shutil.copy(absolute_output_file, requirements_file_tree))
         _run_pip_compile(verbose_command=f"{update_command} -- --verbose")
         requirements_file_relative_path = Path(requirements_file_relative)
         content = requirements_file_relative_path.read_text()

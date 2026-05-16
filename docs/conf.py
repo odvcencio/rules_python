@@ -69,26 +69,26 @@ redirects = {
     "api/python/defs": "/api/rules_python/python/defs.html",
     "api/python/index": "/api/rules_python/python/index.html",
     "api/python/py_runtime_info": "/api/rules_python/python/py_runtime_info.html",
-    "api/python/private/common/py_library_rule_bazel": "/api/rules_python/python/private/py_library_rule.html",
-    "api/python/private/common/py_test_rule_bazel": "/api/rules_python/python/private/py_test_rule_bazel.html",
-    "api/python/private/common/py_binary_rule_bazel": "/api/rules_python/python/private/py_binary_rule.html",
-    "api/python/private/common/py_runtime_rule": "/api/rules_python/python/private/py_runtime_rule.html",
-    "api/python/extensions/pip": "/api/rules_python/python/extensions/pip.html",
-    "api/python/extensions/python": "/api/rules_python/python/extensions/python.html",
-    "api/python/entry_points/py_console_script_binary": "/api/rules_python/python/entry_points/py_console_script_binary.html",
-    "api/python/cc/py_cc_toolchain_info": "/api/rules_python/python/cc/py_cc_toolchain_info.html",
-    "api/python/cc/index": "/api/rules_python/python/cc/index.html",
-    "api/python/py_cc_link_params_info": "/api/rules_python/python/py_cc_link_params_info.html",
-    "api/python/runtime_env_toolchains/index": "/api/rules_python/python/runtime_env_toolchains/index.html",
-    "api/python/pip": "/api/rules_python/python/pip.html",
-    "api/python/config_settings/index": "/api/rules_python/python/config_settings/index.html",
-    "api/python/packaging": "/api/rules_python/python/packaging.html",
-    "api/python/py_runtime": "/api/rules_python/python/py_runtime.html",
-    "api/sphinxdocs/sphinx": "/api/sphinxdocs/sphinxdocs/sphinx.html",
-    "api/sphinxdocs/sphinx_stardoc": "/api/sphinxdocs/sphinxdocs/sphinx_stardoc.html",
-    "api/sphinxdocs/readthedocs": "/api/sphinxdocs/sphinxdocs/readthedocs.html",
-    "api/sphinxdocs/index": "sphinxdocs/index.html",
-    "api/sphinxdocs/private/sphinx_docs_library": "/api/sphinxdocs/sphinxdocs/private/sphinx_docs_library.html",
+    "api/python/private/common/py_library_rule_bazel": "/api/rules_python/python/private/py_library_rule.html",  # noqa: E501
+    "api/python/private/common/py_test_rule_bazel": "/api/rules_python/python/private/py_test_rule_bazel.html",  # noqa: E501
+    "api/python/private/common/py_binary_rule_bazel": "/api/rules_python/python/private/py_binary_rule.html",  # noqa: E501
+    "api/python/private/common/py_runtime_rule": "/api/rules_python/python/private/py_runtime_rule.html",  # noqa: E501
+    "api/python/extensions/pip": "/api/rules_python/python/extensions/pip.html",  # noqa: E501
+    "api/python/extensions/python": "/api/rules_python/python/extensions/python.html",  # noqa: E501
+    "api/python/entry_points/py_console_script_binary": "/api/rules_python/python/entry_points/py_console_script_binary.html",  # noqa: E501
+    "api/python/cc/py_cc_toolchain_info": "/api/rules_python/python/cc/py_cc_toolchain_info.html",  # noqa: E501
+    "api/python/cc/index": "/api/rules_python/python/cc/index.html",  # noqa: E501
+    "api/python/py_cc_link_params_info": "/api/rules_python/python/py_cc_link_params_info.html",  # noqa: E501
+    "api/python/runtime_env_toolchains/index": "/api/rules_python/python/runtime_env_toolchains/index.html",  # noqa: E501
+    "api/python/pip": "/api/rules_python/python/pip.html",  # noqa: E501
+    "api/python/config_settings/index": "/api/rules_python/python/config_settings/index.html",  # noqa: E501
+    "api/python/packaging": "/api/rules_python/python/packaging.html",  # noqa: E501
+    "api/python/py_runtime": "/api/rules_python/python/py_runtime.html",  # noqa: E501
+    "api/sphinxdocs/sphinx": "/api/sphinxdocs/sphinxdocs/sphinx.html",  # noqa: E501
+    "api/sphinxdocs/sphinx_stardoc": "/api/sphinxdocs/sphinxdocs/sphinx_stardoc.html",  # noqa: E501
+    "api/sphinxdocs/readthedocs": "/api/sphinxdocs/sphinxdocs/readthedocs.html",  # noqa: E501
+    "api/sphinxdocs/index": "sphinxdocs/index.html",  # noqa: E501
+    "api/sphinxdocs/private/sphinx_docs_library": "/api/sphinxdocs/sphinxdocs/private/sphinx_docs_library.html",  # noqa: E501
     "api/sphinxdocs/sphinx_docs_library": "/api/sphinxdocs/sphinxdocs/sphinx_docs_library.html",
     "api/sphinxdocs/inventories/index": "/api/sphinxdocs/sphinxdocs/inventories/index.html",
     "pip.html": "pypi/index.html",
@@ -133,11 +133,11 @@ intersphinx_mapping = {
 # --- Extlinks configuration
 extlinks = {
     "gh-issue": (
-        f"https://github.com/bazel-contrib/rules_python/issues/%s",
+        "https://github.com/bazel-contrib/rules_python/issues/%s",
         "#%s issue",
     ),
-    "gh-path": (f"https://github.com/bazel-contrib/rules_python/tree/main/%s", "%s"),
-    "gh-pr": (f"https://github.com/bazel-contrib/rules_python/pull/%s", "#%s PR"),
+    "gh-path": ("https://github.com/bazel-contrib/rules_python/tree/main/%s", "%s"),
+    "gh-pr": ("https://github.com/bazel-contrib/rules_python/pull/%s", "#%s PR"),
 }
 
 # --- MyST configuration

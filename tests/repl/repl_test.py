@@ -1,6 +1,5 @@
 import os
 import subprocess
-import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -49,9 +48,7 @@ class ReplTest(unittest.TestCase):
             raise RuntimeError(f"Failed to run the REPL:\n{error.stdout}") from error
         except Exception as exc:
             if env:
-                env_str = "\n".join(
-                    f"{key}={value!r}" for key, value in sorted(env.items())
-                )
+                env_str = "\n".join(f"{key}={value!r}" for key, value in sorted(env.items()))
             else:
                 env_str = "<inherited env>"
             if isinstance(exc, subprocess.CalledProcessError):
@@ -89,11 +86,9 @@ commmand: {self.repl}
     def test_cannot_import_test_module_directly(self):
         """Validates that we cannot import helper/test_module.py since it's not a direct dep."""
         with self.assertRaises(ModuleNotFoundError):
-            import test_module
+            pass
 
-    @unittest.skipIf(
-        not EXPECT_TEST_MODULE_IMPORTABLE, "test only works without repl_dep set"
-    )
+    @unittest.skipIf(not EXPECT_TEST_MODULE_IMPORTABLE, "test only works without repl_dep set")
     def test_import_test_module_success(self):
         """Validates that we can import helper/test_module.py when repl_dep is set."""
         result = self.run_code_in_repl(
@@ -104,9 +99,7 @@ commmand: {self.repl}
         )
         self.assertIn("Hello World", result)
 
-    @unittest.skipIf(
-        EXPECT_TEST_MODULE_IMPORTABLE, "test only works without repl_dep set"
-    )
+    @unittest.skipIf(EXPECT_TEST_MODULE_IMPORTABLE, "test only works without repl_dep set")
     def test_import_test_module_failure(self):
         """Validates that we cannot import helper/test_module.py when repl_dep isn't set."""
         result = self.run_code_in_repl(
@@ -150,9 +143,7 @@ commmand: {self.repl}
             for var_name in ("exitmsg", "sys", "code", "bazel_runfiles", "STUB_PATH"):
                 with self.subTest(var_name=var_name):
                     result = self.run_code_in_repl([f"print({var_name})"], env=env)
-                    self.assertIn(
-                        f"NameError: name '{var_name}' is not defined", result
-                    )
+                    self.assertIn(f"NameError: name '{var_name}' is not defined", result)
 
 
 if __name__ == "__main__":

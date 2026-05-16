@@ -17,9 +17,7 @@ class LocalToolchainTest(unittest.TestCase):
         shell_path = shutil.which("python3")
 
         if shell_path is None:
-            self.fail(
-                "which(python3) returned None.\n" + f"PATH={os.environ.get('PATH')}"
-            )
+            self.fail("which(python3) returned None.\n" + f"PATH={os.environ.get('PATH')}")
 
         # We call the interpreter and print its executable because of
         # things like pyenv: they install a shim that re-execs python.

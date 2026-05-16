@@ -22,14 +22,14 @@ This enables prefix-based repository mappings to reduce memory usage for large
 dependency graphs under bzlmod.
 :::
 """
-import collections.abc
+
 import inspect
 import os
 import pathlib
 import posixpath
 import sys
 from collections import defaultdict
-from typing import Dict, Generator, Iterable, List, Optional, Tuple, Union
+from typing import Dict, Generator, Optional, Tuple, Union
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -67,9 +67,7 @@ class _RepositoryMapping:
             prefix_source,
             target_app,
         ), target_canonical in prefixed_mappings.items():
-            self._grouped_prefixed_mappings[target_app].append(
-                (prefix_source, target_canonical)
-            )
+            self._grouped_prefixed_mappings[target_app].append((prefix_source, target_canonical))
 
     @staticmethod
     def create_from_file(repo_mapping_path: Optional[str]) -> "_RepositoryMapping":
@@ -132,9 +130,7 @@ class _RepositoryMapping:
 
         # Try prefixed mapping if no exact match found
         if target_apparent in self._grouped_prefixed_mappings:
-            for prefix_source, target_canonical in self._grouped_prefixed_mappings[
-                target_apparent
-            ]:
+            for prefix_source, target_canonical in self._grouped_prefixed_mappings[target_apparent]:
                 if source_repo.startswith(prefix_source):
                     return target_canonical
 
@@ -147,9 +143,7 @@ class _RepositoryMapping:
         Returns:
             True if there are no mappings, False otherwise
         """
-        return (
-            len(self._exact_mappings) == 0 and len(self._grouped_prefixed_mappings) == 0
-        )
+        return len(self._exact_mappings) == 0 and len(self._grouped_prefixed_mappings) == 0
 
 
 class Path(pathlib.Path):
@@ -344,9 +338,7 @@ class Path(pathlib.Path):
         return self._as_path().read_bytes()
 
     # override
-    def read_text(
-        self, encoding: Optional[str] = None, errors: Optional[str] = None
-    ) -> str:
+    def read_text(self, encoding: Optional[str] = None, errors: Optional[str] = None) -> str:
         return self._as_path().read_text(encoding=encoding, errors=errors)
 
     # override
@@ -427,13 +419,11 @@ class _ManifestBased:
             for line in f:
                 line = line.rstrip("\n")
                 if line.startswith(" "):
-                    # In lines that start with a space, spaces, newlines, and backslashes are escaped as \s, \n, and \b in
+                    # In lines that start with a space, spaces, newlines, and backslashes are escaped as \s, \n, and \b in  # noqa: E501
                     # link and newlines and backslashes are escaped in target.
                     escaped_link, escaped_target = line[1:].split(" ", maxsplit=1)
                     link = (
-                        escaped_link.replace(r"\s", " ")
-                        .replace(r"\n", "\n")
-                        .replace(r"\b", "\\")
+                        escaped_link.replace(r"\s", " ").replace(r"\n", "\n").replace(r"\b", "\\")
                     )
                     target = escaped_target.replace(r"\n", "\n").replace(r"\b", "\\")
                 else:
@@ -579,9 +569,9 @@ class Runfiles:
             #   which also should not be mapped.
             return self._strategy.RlocationChecked(path)
 
-        assert (
-            source_repo is not None
-        ), "BUG: if the `source_repo` is None, we should never go past the `if` statement above"
+        assert source_repo is not None, (
+            "BUG: if the `source_repo` is None, we should never go past the `if` statement above"
+        )
 
         # Look up the target repository using the repository mapping
         if target_canonical is not None:
@@ -664,9 +654,7 @@ class Runfiles:
                 )
             )
 
-        caller_runfiles_directory = caller_runfiles_path[
-            : caller_runfiles_path.find(os.path.sep)
-        ]
+        caller_runfiles_directory = caller_runfiles_path[: caller_runfiles_path.find(os.path.sep)]
         # With Bzlmod, the runfiles directory of the main repository is always
         # named "_main". Without Bzlmod, the value returned by this function is
         # never used, so we just assume Bzlmod is enabled.

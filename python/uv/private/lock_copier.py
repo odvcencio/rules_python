@@ -52,7 +52,8 @@ The in source file copy is out of date, please run:
 
     if "BUILD_WORKSPACE_DIRECTORY" not in environ:
         raise RuntimeError(
-            "This must be either run as `bazel test` via a `native_test` or similar or via `bazel run`"
+            "This must be either run as `bazel test` via a `native_test` or"
+            " similar or via `bazel run`"
         )
 
     print(f"cp <bazel-sandbox>/{src} <workspace>/{dst}")

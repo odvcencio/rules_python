@@ -76,8 +76,7 @@ class WhlScriptsRunnableTest(unittest.TestCase):
             # invokes the interpreter.
             self.assertIn("pythonw.exe", first_line)
             self.assertTrue(
-                first_line.startswith("@setlocal")
-                or first_line.startswith("@echo off"),
+                first_line.startswith("@setlocal") or first_line.startswith("@echo off"),
                 f"Expected Windows batch wrapper, got {first_line}",
             )
         else:
@@ -92,7 +91,7 @@ class WhlScriptsRunnableTest(unittest.TestCase):
         try:
             os.close(temp_fd)
             out_path = Path(temp_str)
-            result = subprocess.run(
+            _ = subprocess.run(
                 [str(script_path), str(out_path)],
                 capture_output=True,
                 text=True,

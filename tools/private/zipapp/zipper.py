@@ -1,7 +1,6 @@
 import argparse
 import os
 import shutil
-import stat
 import sys
 import zipfile
 from os.path import dirname
@@ -15,9 +14,7 @@ def unix_join(*parts):
     return "/".join(parts)
 
 
-def _get_zip_runfiles_path(
-    path, workspace_name, legacy_external_runfiles, runfiles_dir
-):
+def _get_zip_runfiles_path(path, workspace_name, legacy_external_runfiles, runfiles_dir):
     if legacy_external_runfiles and path.startswith("external/"):
         path = path[len("external/") :]
     elif path.startswith("../"):
@@ -75,9 +72,7 @@ def _parse_entry(
     return type_, is_symlink_str, zip_path, content_path
 
 
-def read_manifest(
-    manifest_path, workspace_name, legacy_external_runfiles, runfiles_dir
-):
+def read_manifest(manifest_path, workspace_name, legacy_external_runfiles, runfiles_dir):
     with open(manifest_path, "r") as f:
         entries = []
         for line_idx, line in enumerate(f):
@@ -192,9 +187,7 @@ def create_zip(
     compress_type = zipfile.ZIP_STORED if compress_level == 0 else zipfile.ZIP_DEFLATED
     zf_level = compress_level if compress_level != 0 else None
 
-    entries = read_manifest(
-        manifest_path, workspace_name, legacy_external_runfiles, runfiles_dir
-    )
+    entries = read_manifest(manifest_path, workspace_name, legacy_external_runfiles, runfiles_dir)
 
     seen = set()
     with zipfile.ZipFile(
@@ -260,9 +253,7 @@ into account.
         choices=["0", "1"],
         help="Whether to use legacy external runfiles behavior",
     )
-    parser.add_argument(
-        "--runfiles-dir", default="runfiles", help="Name of the runfiles directory"
-    )
+    parser.add_argument("--runfiles-dir", default="runfiles", help="Name of the runfiles directory")
     parser.add_argument(
         "--target-platform-pathsep", help="The path separator for the target platform"
     )
